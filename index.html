@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Scientists (WS)</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- CDNs de Supabase y Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>🌧️ Weather Scientists (WS)</h1>
+    <p>Reporte Climático Comunitario</p>
+  </header>
+
+  <main>
+    <div id="map"></div>
+
+    <form id="report-form">
+      <h3>Nuevo Reporte Ciudadano</h3>
+
+      <label for="tipo_evento">Tipo de Evento:</label>
+      <select id="tipo_evento" required>
+        <option value="derrumbe">🚨 Derrumbe / Deslizamiento</option>
+        <option value="lluvia">🌧️ Lluvia (Pluviómetro)</option>
+        <option value="viento">💨 Viento Fuerte</option>
+        <option value="granizo">🧊 Granizo</option>
+        <option value="otro">⚠️ Otro</option>
+      </select>
+
+      <div id="campo-lluvia" style="display:none;">
+        <label for="medida_mm">Medida en Pluviómetro (mm):</label>
+        <input type="number" id="medida_mm" step="0.1" placeholder="Ej: 15.2">
+      </div>
+
+      <label for="descripcion">Observaciones:</label>
+      <textarea id="descripcion" placeholder="Describe lo sucedido..."></textarea>
+
+      <label for="foto">Fotografía del evento:</label>
+      <input type="file" id="foto" accept="image/*" capture="environment">
+
+      <button type="button" id="btn-geolocalizar">📍 Usar mi ubicación actual</button>
+      <p id="geo-status">Ubicación no seleccionada</p>
+
+      <input type="hidden" id="latitud">
+      <input type="hidden" id="longitud">
+
+      <button type="submit" id="btn-enviar">Guardar Reporte</button>
+    </form>
+  </main>
+</body>
+</html>
