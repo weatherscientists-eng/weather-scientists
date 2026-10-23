@@ -87,7 +87,35 @@ async function cargarReportes() {
       ${r.foto_url ? `<img src="${r.foto_url}" width="160px" style="border-radius:6px; margin-top:5px;"/>` : ''}
     `;
     L.marker([r.latitud, r.longitud]).addTo(map).bindPopup(popup);
-  });
+      });
+  
 }
 
 cargarReportes();
+
+// --- LÓGICA DE NAVEGACIÓN (TABS) ---
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabSections = document.querySelectorAll('.tab-section');
+
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // 1. Quitar la clase 'active' de todos los botones y secciones
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabSections.forEach(sec => sec.classList.remove('active'));
+
+    // 2. Añadir clase 'active' al botón clickeado
+    button.classList.add('active');
+
+    // 3. Mostrar la sección correspondiente
+    const targetId = button.getAttribute('data-target');
+    const targetSection = document.getElementById(targetId);
+    targetSection.classList.add('active');
+
+    // 4. Si volvemos a la pestaña de clima, re-ajustar el mapa (soluciona error visual de Leaflet)
+    if (targetId === 'seccion-clima') {
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+    }
+  });
+});
