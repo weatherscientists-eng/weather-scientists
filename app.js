@@ -9,6 +9,24 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
+const reportMarkers = L.layerGroup().addTo(map);
+let locationMarker = null;
+function seleccionarUbicacion(lat, lng) {
+  document.getElementById('latitud').value = lat;
+  document.getElementById('longitud').value = lng;
+  document.getElementById('geo-status').innerText =
+    `📍 Ubicación: ${lat.toFixed(5)}, ${lng.toFixed(5)}. Puedes mover el marcador.`;
+  if (locationMarker) locationMarker.setLatLng([lat, lng]);
+  else {
+    locationMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
+    locationMarker.on('dragend', () => {
+      const position = locationMarker.getLatLng();
+      seleccionarUbicacion(position.lat, position.lng);
+    });
+  }
+}
+map.on('click', e => seleccionarUbicacion(e.latlng.lat, e.latlng.lng));
+document.getElementById('geo-status').innerText = 'Toca el mapa para seleccionar el lugar o usa tu ubicación actual.';
 // Fuerza al mapa a recalcular su tamaño medio segundo después de cargar
 setTimeout(() => {
   map.invalidateSize();
@@ -23,11 +41,8 @@ document.getElementById('btn-geolocalizar').addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition((pos) => {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
-      document.getElementById('latitud').value = lat;
-      document.getElementById('longitud').value = lng;
-      document.getElementById('geo-status').innerText = `📍 Ubicación: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      seleccionarUbicacion(lat, lng);
       map.setView([lat, lng], 15);
-      L.marker([lat, lng]).addTo(map).bindPopup("Tu ubicación actual").openPopup();
     }, () => alert("Por favor activa el permiso de ubicación/GPS en tu navegador."));
   }
 });
@@ -38,7 +53,7 @@ document.getElementById('report-form').addEventListener('submit', async (e) => {
   const lng = document.getElementById('longitud').value;
 
   if (!lat || !lng) {
-    alert("Haz clic en 'Usar mi ubicación actual' antes de enviar.");
+    alert("Selecciona el lugar tocando el mapa o usa tu ubicación actual.");
     return;
   }
 
@@ -70,6 +85,11 @@ document.getElementById('report-form').addEventListener('submit', async (e) => {
   } else {
     alert("¡Reporte publicado exitosamente!");
     document.getElementById('report-form').reset();
+    document.getElementById('latitud').value = '';
+    document.getElementById('longitud').value = '';
+    document.getElementById('geo-status').innerText = 'Toca el mapa para seleccionar el lugar o usa tu ubicación actual.';
+    document.getElementById('campo-lluvia').style.display = 'none';
+    if (locationMarker) { map.removeLayer(locationMarker); locationMarker = null; }
     cargarReportes();
   }
 });
@@ -78,14 +98,18 @@ async function cargarReportes() {
   const { data: reportes, error } = await _supabase.from('reportes').select('*');
   if (error) return;
 
+  reportMarkers.clearLayers();
   reportes.forEach(r => {
+    if (r.latitud == null || r.longitud == null || r.latitud === '' || r.longitud === '') return;
+    const lat = Number(r.latitud), lng = Number(r.longitud);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
     const popup = `
       <b>${r.tipo_evento.toUpperCase()}</b><br>
       ${r.medida_mm ? `Pluviómetro: ${r.medida_mm} mm<br>` : ''}
       <p>${r.descripcion || ''}</p>
       ${r.foto_url ? `<img src="${r.foto_url}" width="160px" style="border-radius:6px; margin-top:5px;"/>` : ''}
     `;
-    L.marker([r.latitud, r.longitud]).addTo(map).bindPopup(popup);
+    L.marker([lat, lng]).addTo(reportMarkers).bindPopup(popup);
   });
 }
 cargarReportes();
