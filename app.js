@@ -218,7 +218,50 @@ async function cargarTotalCompostado() {
 // Cargar el contador al iniciar la app
 cargarTotalCompostado();
 
-// --- 3. LÓGICA DE NAVEGACIÓN (TABS) ---
+// --- 3. LÓGICA DE RECICLAJE ---
+document.getElementById('reciclaje-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const btnReciclaje = document.getElementById('btn-reciclaje');
+  btnReciclaje.innerText = "Guardando...";
+  btnReciclaje.disabled = true;
+
+  const fecha = document.getElementById('fecha_reciclaje').value;
+  const tipo = document.getElementById('tipo_material').value;
+  const cantidad = parseFloat(document.getElementById('cantidad_reciclaje').value);
+  
+  // Insertar en la tabla 'reciclaje'
+  const { error } = await _supabase.from('reciclaje').insert([{
+    fecha: fecha,
+    tipo_material: tipo,
+    cantidad_kg: cantidad
+  }]);
+
+  if (error) {
+    alert("Error al guardar el reciclaje: " + error.message);
+  } else {
+    alert("¡Registro de reciclaje guardado con éxito! ♻️");
+    document.getElementById('reciclaje-form').reset();
+    cargarTotalReciclado(); // Actualizamos el contador automáticamente
+  }
+
+  btnReciclaje.innerText = "Registrar Reciclaje";
+  btnReciclaje.disabled = false;
+});
+
+// Función para sumar y mostrar el total de kilos reciclados
+async function cargarTotalReciclado() {
+  const { data, error } = await _supabase.from('reciclaje').select('cantidad_kg');
+  if (error) return;
+
+  const total = data.reduce((suma, registro) => suma + (registro.cantidad_kg || 0), 0);
+  document.getElementById('total-reciclado').innerText = `${total.toFixed(1)} kg`;
+}
+
+// Cargar el contador al iniciar la app
+cargarTotalReciclado();
+
+// --- 4. LÓGICA DE NAVEGACIÓN (TABS) ---
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabSections = document.querySelectorAll('.tab-section');
 
@@ -240,4 +283,3 @@ tabButtons.forEach(button => {
     }
   });
 });
-
