@@ -12,6 +12,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const reportMarkers = L.layerGroup().addTo(map);
 let locationMarker = null;
 function seleccionarUbicacion(lat, lng) {
+  document.getElementById('btn-mapa').setAttribute('aria-pressed','false');
+  document.getElementById('map').classList.remove('picking');
   document.getElementById('latitud').value = lat;
   document.getElementById('longitud').value = lng;
   document.getElementById('geo-status').innerText =
@@ -36,81 +38,123 @@ document.getElementById('tipo_evento').addEventListener('change', (e) => {
   document.getElementById('campo-lluvia').style.display = e.target.value === 'lluvia' ? 'block' : 'none';
 });
 
+const estadoReporte = document.getElementById('report-status');
+const fechaEvento = document.getElementById('fecha_evento');
+function horaColombia() {
+  const parts = new Intl.DateTimeFormat('sv-SE', {timeZone:'America/Bogota',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
+  return parts.replace(' ', 'T');
+}
+function prepararFecha() { fechaEvento.value = horaColombia(); fechaEvento.max = horaColombia(); }
+prepararFecha();
+fechaEvento.addEventListener('focus', () => { fechaEvento.max = horaColombia(); });
+const botonMapa = document.getElementById('btn-mapa');
+function modoMapa() {
+  botonMapa.setAttribute('aria-pressed', 'true');
+  document.getElementById('map').classList.add('picking');
+  document.getElementById('geo-status').textContent = 'Toca el lugar del fenómeno o mueve el mapa y elige su centro.';
+  document.getElementById('map').focus({preventScroll:true});
+  map.invalidateSize();
+}
+botonMapa.addEventListener('click', modoMapa);
+document.getElementById('btn-centro').addEventListener('click', () => { const p = map.getCenter(); seleccionarUbicacion(p.lat,p.lng); });
+const gpsButton = document.getElementById('btn-geolocalizar');
 document.getElementById('btn-geolocalizar').addEventListener('click', () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      seleccionarUbicacion(lat, lng);
-      map.setView([lat, lng], 15);
-    }, () => alert("Por favor activa el permiso de ubicación/GPS en tu navegador."));
-  }
+  const status = document.getElementById('geo-status');
+  if (!navigator.geolocation) { status.textContent = 'Tu navegador no ofrece ubicación. Escoge el lugar en el mapa.'; return; }
+  gpsButton.disabled = true;
+  status.textContent = 'Buscando tu ubicación…';
+  navigator.geolocation.getCurrentPosition(pos => {
+    seleccionarUbicacion(pos.coords.latitude,pos.coords.longitude);
+    map.setView([pos.coords.latitude,pos.coords.longitude],15);
+    gpsButton.disabled = false;
+  }, error => {
+    status.textContent = error.code === 1 ? 'No se concedió permiso de ubicación. Puedes escoger el lugar en el mapa.' : 'No pudimos obtener tu ubicación. Escoge el lugar en el mapa o vuelve a intentar.';
+    gpsButton.disabled = false;
+  }, {enableHighAccuracy:true,timeout:15000,maximumAge:60000});
 });
-
-document.getElementById('report-form').addEventListener('submit', async (e) => {
+let previewUrl;
+const fotoInputElement = document.getElementById('foto');
+fotoInputElement.addEventListener('change', () => {
+  const preview = document.getElementById('foto-preview');
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  preview.hidden = true; preview.removeAttribute('src');
+  const file = fotoInputElement.files[0];
+  fotoInputElement.setCustomValidity('');
+  if (!file) return;
+  if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) {
+    fotoInputElement.setCustomValidity('Escoge una imagen de hasta 8 MB.'); fotoInputElement.reportValidity(); return;
+  }
+  previewUrl = URL.createObjectURL(file); preview.src = previewUrl; preview.hidden = false;
+});
+function construirDescripcion() {
+  const value = id => document.getElementById(id).value.trim();
+  return [
+    'Observado: ' + value('fecha_evento').replace('T',' ') + ' (Colombia)',
+    value('sector') && 'Sector: ' + value('sector'),
+    value('intensidad') && 'Intensidad percibida: ' + value('intensidad'),
+    value('duracion') && 'Duración aproximada: ' + value('duracion') + ' min',
+    value('tipo_evento') === 'lluvia' && value('medida_mm') && value('periodo_lluvia') && 'Período del pluviómetro: ' + value('periodo_lluvia'),
+    'Observación: ' + value('descripcion'),
+    value('afectacion') && 'Afectación observada: ' + value('afectacion')
+  ].filter(Boolean).join('\n');
+}
+document.getElementById('report-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const lat = document.getElementById('latitud').value;
-  const lng = document.getElementById('longitud').value;
-
+  if (document.getElementById('btn-enviar').disabled) return;
+  estadoReporte.className = '';
+  estadoReporte.textContent = '';
+  const lat = document.getElementById('latitud').value, lng = document.getElementById('longitud').value;
   if (!lat || !lng) {
-    alert("Selecciona el lugar tocando el mapa o usa tu ubicación actual.");
-    return;
+    document.getElementById('geo-status').textContent = 'Falta el lugar del fenómeno. Usa tu ubicación o escógelo en el mapa.';
+    document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'}); return;
   }
-
-  const fotoInput = document.getElementById('foto').files[0];
-  let fotoUrl = null;
-
-  if (fotoInput) {
-    const fileName = `${Date.now()}_${fotoInput.name}`;
-    const { data, error: storageError } = await _supabase.storage
-      .from('reportes-fotos')
-      .upload(fileName, fotoInput);
-
-    if (!storageError) {
-      fotoUrl = `${SUPABASE_URL}/storage/v1/object/public/reportes-fotos/${fileName}`;
+  if (fechaEvento.value > horaColombia()) { estadoReporte.textContent = 'La observación no puede tener una fecha futura.'; estadoReporte.className='error'; return; }
+  const button = document.getElementById('btn-enviar'); button.disabled=true; button.textContent='Compartiendo…';
+  try {
+    let fotoUrl = null;
+    const file = fotoInputElement.files[0];
+    if (file) {
+      const fileName = `clima_${crypto.randomUUID()}.${file.name.split('.').pop().replace(/[^a-z0-9]/gi,'') || 'jpg'}`;
+      const {error} = await _supabase.storage.from('reportes-fotos').upload(fileName,file);
+      if (error) throw new Error('No se pudo subir la foto. Tu reporte sigue aquí para que vuelvas a intentar.');
+      fotoUrl = _supabase.storage.from('reportes-fotos').getPublicUrl(fileName).data.publicUrl;
     }
-  }
-
-  const { error } = await _supabase.from('reportes').insert([{
-    tipo_evento: document.getElementById('tipo_evento').value,
-    medida_mm: document.getElementById('medida_mm').value || null,
-    descripcion: document.getElementById('descripcion').value,
-    foto_url: fotoUrl,
-    latitud: parseFloat(lat),
-    longitud: parseFloat(lng)
-  }]);
-
-  if (error) {
-    alert("Error al guardar: " + error.message);
-  } else {
-    alert("¡Reporte publicado exitosamente!");
-    document.getElementById('report-form').reset();
-    document.getElementById('latitud').value = '';
-    document.getElementById('longitud').value = '';
-    document.getElementById('geo-status').innerText = 'Toca el mapa para seleccionar el lugar o usa tu ubicación actual.';
-    document.getElementById('campo-lluvia').style.display = 'none';
-    if (locationMarker) { map.removeLayer(locationMarker); locationMarker = null; }
-    cargarReportes();
-  }
+    const lluvia = document.getElementById('tipo_evento').value === 'lluvia';
+    const {error} = await _supabase.from('reportes').insert([{
+      tipo_evento:document.getElementById('tipo_evento').value,
+      medida_mm:lluvia && document.getElementById('medida_mm').value !== '' ? Number(document.getElementById('medida_mm').value) : null,
+      descripcion:construirDescripcion(),foto_url:fotoUrl,latitud:Number(lat),longitud:Number(lng)
+    }]);
+    if (error) throw new Error('No se pudo guardar: ' + error.message);
+    document.getElementById('report-form').reset(); prepararFecha();
+    document.getElementById('latitud').value=''; document.getElementById('longitud').value='';
+    document.getElementById('campo-lluvia').style.display='none';
+    document.getElementById('foto-preview').hidden=true;
+    if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl=null; }
+    if (locationMarker) {map.removeLayer(locationMarker);locationMarker=null;}
+    document.getElementById('geo-status').textContent='Selecciona el lugar para un nuevo reporte.';
+    estadoReporte.textContent='¡Gracias! Tu observación climática ya fue compartida con la comunidad 💚';
+    estadoReporte.focus(); cargarReportes();
+  } catch(error) { estadoReporte.className='error';estadoReporte.textContent=error.message || 'No pudimos conectar. Intenta nuevamente.';estadoReporte.focus(); }
+  finally {button.disabled=false;button.textContent='Compartir mi reporte ↗';}
 });
-
 async function cargarReportes() {
-  const { data: reportes, error } = await _supabase.from('reportes').select('*');
-  if (error) return;
-
-  reportMarkers.clearLayers();
-  reportes.forEach(r => {
-    if (r.latitud == null || r.longitud == null || r.latitud === '' || r.longitud === '') return;
-    const lat = Number(r.latitud), lng = Number(r.longitud);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
-    const popup = `
-      <b>${r.tipo_evento.toUpperCase()}</b><br>
-      ${r.medida_mm ? `Pluviómetro: ${r.medida_mm} mm<br>` : ''}
-      <p>${r.descripcion || ''}</p>
-      ${r.foto_url ? `<img src="${r.foto_url}" width="160px" style="border-radius:6px; margin-top:5px;"/>` : ''}
-    `;
-    L.marker([lat, lng]).addTo(reportMarkers).bindPopup(popup);
-  });
+  try {
+    const {data:reportes,error} = await _supabase.from('reportes').select('*');
+    if (error) throw error;
+    reportMarkers.clearLayers();
+    reportes.forEach(r => {
+      if (r.latitud == null || r.longitud == null || r.latitud === '' || r.longitud === '') return;
+      const lat=Number(r.latitud),lng=Number(r.longitud);
+      if (!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180) return;
+      const popup=document.createElement('div');
+      const title=document.createElement('strong');title.textContent=String(r.tipo_evento || 'Observación').toUpperCase();popup.append(title);
+      if (r.medida_mm != null) {const measurement=document.createElement('p');measurement.textContent='Pluviómetro: '+r.medida_mm+' mm';popup.append(measurement);}
+      const description=document.createElement('p');description.textContent=r.descripcion || '';popup.append(description);
+      if (r.foto_url) {try {const url=new URL(r.foto_url);if (url.protocol==='https:') {const img=document.createElement('img');img.src=url.href;img.width=180;img.alt='Fotografía del fenómeno';img.loading='lazy';popup.append(img);}} catch {}}
+      L.marker([lat,lng]).addTo(reportMarkers).bindPopup(popup);
+    });
+  } catch { document.querySelector('.map-caption').textContent='No pudimos cargar los reportes existentes. Revisa tu conexión y recarga la página.'; }
 }
 cargarReportes();
 
@@ -196,3 +240,4 @@ tabButtons.forEach(button => {
     }
   });
 });
+
