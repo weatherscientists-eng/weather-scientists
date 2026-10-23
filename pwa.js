@@ -5,7 +5,7 @@
  function refresh(){panel.hidden=standalone();}
  function showHelp(text){help.textContent=text;help.hidden=false;}
  window.addEventListener('beforeinstallprompt',event=>{
-  event.preventDefault();promptEvent=event;refresh();button.textContent='Instalar WS app';
+  event.preventDefault();panel.dataset.installable='true';promptEvent=event;refresh();button.textContent='Instalar WS app';
  });
  window.addEventListener('appinstalled',()=>{promptEvent=null;panel.hidden=true;});
  matchMedia('(display-mode: standalone)').addEventListener('change',refresh);
@@ -25,6 +25,8 @@
   window.addEventListener('load',async()=>{
    try{
     const registration=await navigator.serviceWorker.register('/sw.js',{scope:'/',updateViaCache:'none'});
+    panel.dataset.serviceWorker='registered';
+    navigator.serviceWorker.ready.then(()=>{panel.dataset.serviceWorker='active';});
     const available=()=>window.dispatchEvent(new Event('ws-update-ready'));
     if(registration.waiting)available();
     registration.addEventListener('updatefound',()=>{
