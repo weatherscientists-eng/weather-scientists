@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WS app | Weather Scientists</title>
-  <meta name="theme-color" content="#083c70">
-  <meta name="description" content="WS app de Weather Scientists: ciencia comunitaria para observar el clima y cuidar nuestro territorio.">
+<meta name="theme-color" content="#083c70">
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
@@ -33,37 +32,33 @@
   <main>
     <!-- 1. SECCIÓN CLIMA (Ya funcional) -->
     <section id="seccion-clima" class="tab-section active">
-      <div id="map"></div>
-      <form id="report-form" class="card">
-        <h3>Nuevo Reporte Ciudadano</h3>
-        
-        <label for="tipo_evento">Tipo de Evento:</label>
-        <select id="tipo_evento" required>
-          <option value="derrumbe">🚨 Derrumbe / Deslizamiento</option>
-          <option value="lluvia">🌧️ Lluvia (Pluviómetro)</option>
-          <option value="viento">💨 Viento Fuerte</option>
-          <option value="granizo">🧊 Granizo</option>
-          <option value="otro">⚠️ Otro</option>
-        </select>
-
-        <div id="campo-lluvia" style="display:none;">
-          <label for="medida_mm">Medida en Pluviómetro (mm):</label>
-          <input type="number" id="medida_mm" step="0.1" placeholder="Ej: 15.2">
+      <div class="report-hero"><span class="eyebrow">CIENCIA QUE NACE EN LA COMUNIDAD</span><h2>Tu mirada cuenta 🌦️</h2><p>Observemos juntos el clima de nuestro territorio. Registra lluvias, vientos, granizo y otros fenómenos para construir información desde la comunidad.</p><div class="hero-tags"><span>📍 Ubica</span><span>👀 Describe</span><span>🌱 Comparte</span></div></div>
+      <form id="report-form" class="report-layout">
+        <div class="location-card">
+          <div class="step-heading"><span class="step">1</span><div><h3>¿Dónde ocurrió?</h3><p>Elige el lugar del evento, aunque estés en otro sitio.</p></div></div>
+          <div class="location-actions"><button type="button" id="btn-geolocalizar">📍 Usar mi ubicación actual</button><button type="button" id="btn-mapa" class="secondary" aria-pressed="false">🗺️ Escoger en el mapa</button></div>
+          <p id="geo-status" role="status" aria-live="polite">Selecciona una ubicación.</p>
+          <div id="map" tabindex="0" aria-label="Mapa de reportes de la comunidad"></div>
+          <button type="button" id="btn-centro" class="text-button">Elegir el centro del mapa</button>
+          <p class="hint">Acerca o mueve el mapa y toca el lugar. También puedes moverlo con las flechas y elegir su centro.</p>
+          <input type="hidden" id="latitud"><input type="hidden" id="longitud">
+          <label for="sector">Vereda, barrio o punto de referencia <span>(opcional)</span></label><input id="sector" maxlength="120" placeholder="Ej.: La Corrala, junto al puente">
+          <div class="map-caption">🔵 Los pines muestran observaciones de la comunidad.</div>
         </div>
-
-        <label for="descripcion">Observaciones:</label>
-        <textarea id="descripcion" placeholder="Describe lo sucedido..."></textarea>
-
-        <label for="foto">Fotografía del evento:</label>
-        <input type="file" id="foto" accept="image/*" capture="environment">
-
-        <button type="button" id="btn-geolocalizar">📍 Usar mi ubicación actual</button>
-        <p id="geo-status">Ubicación no seleccionada</p>
-
-        <input type="hidden" id="latitud">
-        <input type="hidden" id="longitud">
-
-        <button type="submit" id="btn-enviar">Guardar Reporte</button>
+        <div class="details-card">
+          <div class="step-heading"><span class="step">2</span><div><h3>Cuéntanos qué viste</h3><p>Un reporte sencillo puede aportar mucho.</p></div></div>
+          <label for="tipo_evento">¿Qué fenómeno observaste?</label><select id="tipo_evento" required><option value="">Escoge el tipo de evento</option><option value="lluvia">🌧️ Lluvia</option><option value="derrumbe">⛰️ Derrumbe / Deslizamiento asociado a lluvias</option><option value="viento">💨 Viento fuerte</option><option value="granizo">🧊 Granizo</option><option value="otro">🌦️ Otro fenómeno climático</option></select>
+          <div id="campo-lluvia" class="rain-box" style="display:none"><label for="medida_mm">Lectura del pluviómetro en mm <span>(opcional)</span></label><input type="number" id="medida_mm" min="0" step="0.1" placeholder="Ej.: 15.2"><label for="periodo_lluvia">Tiempo de recolección <span>(si lo conoces)</span></label><select id="periodo_lluvia"><option value="">No lo sé / No aplica</option><option>Últimas 24 horas</option><option>Desde que empezó la lluvia</option><option>Otro período (descríbelo abajo)</option></select><p class="hint">Solo escribe milímetros si los mediste con un pluviómetro.</p></div>
+          <label for="fecha_evento">¿Cuándo lo observaste?</label><input type="datetime-local" id="fecha_evento" required><p class="hint">Hora de Colombia. Puedes reportar algo que ocurrió antes.</p>
+          <label for="intensidad">Intensidad percibida (según tu observación)</label><select id="intensidad"><option value="">No estoy seguro/a</option><option>Leve</option><option>Moderado</option><option>Fuerte</option></select>
+          <label for="descripcion">¿Qué observaste?</label><textarea id="descripcion" rows="3" maxlength="1500" required placeholder="Ej.: Llovió durante media hora y se acumuló agua en el camino."></textarea>
+          <label for="duracion">Duración aproximada en minutos <span>(si la conoces)</span></label><input type="number" id="duracion" min="1" max="10080" step="1" placeholder="Ej.: 30"><label for="afectacion">¿Hubo alguna afectación? <span>(opcional)</span></label><input id="afectacion" maxlength="200" placeholder="Ej.: camino bloqueado, cultivos afectados o ninguna">
+          <div class="photo-box"><label for="foto">📷 Añade una foto <span>(opcional · hasta 8 MB)</span></label><p class="hint">Una imagen ayuda a entender lo que pasó.</p><input type="file" id="foto" accept="image/*"><img id="foto-preview" alt="Vista previa de tu fotografía" hidden></div>
+          <p class="privacy-note">Tu reporte será público. Evita escribir teléfonos, nombres de personas u otros datos personales.</p>
+          <div id="report-status" role="status" aria-live="polite" tabindex="-1"></div>
+          <button type="submit" id="btn-enviar">Compartir mi reporte ↗</button>
+          <p class="hint center-text">Gracias por hacer ciencia con tu comunidad 💚</p>
+        </div>
       </form>
     </section>
 
@@ -105,37 +100,12 @@
       </div>
     </section>
 
-    <!-- 3. SECCIÓN RECICLAJE (ACTUALIZADA) -->
+    <!-- 3. SECCIÓN RECICLAJE -->
     <section id="seccion-reciclaje" class="tab-section">
       <div class="card">
         <h2>♻️ Registro de Reciclaje</h2>
-        <p>Clasifica y pesa tus residuos aprovechables. ¡Cada kilo cuenta!</p>
-        
-        <form id="reciclaje-form" style="margin-top: 1rem;">
-          <label for="fecha_reciclaje">Fecha de recolección:</label>
-          <input type="date" id="fecha_reciclaje" required>
-
-          <label for="tipo_material">Tipo de Material:</label>
-          <select id="tipo_material" required>
-            <option value="plastico">🥤 Plástico (Botellas, envases)</option>
-            <option value="carton_papel">📦 Cartón y Papel</option>
-            <option value="vidrio">🍾 Vidrio</option>
-            <option value="metal">🥫 Metal (Latas, chatarra)</option>
-            <option value="ecoladrillos">🧱 Ecoladrillos / Botellas de amor</option>
-          </select>
-
-          <label for="cantidad_reciclaje">Cantidad (kg o unidades):</label>
-          <input type="number" id="cantidad_reciclaje" step="0.1" placeholder="Ej: 2.5" required>
-
-          <button type="submit" id="btn-reciclaje">Registrar Reciclaje</button>
-        </form>
-      </div>
-
-      <!-- Dashboard / Contador de Reciclaje -->
-      <div class="card center-text">
-        <h3>🌍 Meta de Reciclaje</h3>
-        <p>Total de material recuperado por la comunidad:</p>
-        <h2 id="total-reciclado" style="color: #0066ff; font-size: 2rem;">0 kg</h2>
+        <p>Aquí pondremos las metas de reciclaje, plástico, cartón y ecoladrillos.</p>
+        <!-- Pronto agregaremos el formulario y gráficos aquí -->
       </div>
     </section>
 
@@ -177,3 +147,4 @@
   </main>
 </body>
 </html>
+
