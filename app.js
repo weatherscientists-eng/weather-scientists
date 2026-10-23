@@ -218,26 +218,31 @@ async function cargarTotalCompostado() {
 // Cargar el contador al iniciar la app
 cargarTotalCompostado();
 
-// --- 3. LÓGICA DE NAVEGACIÓN (TABS) ---
-const tabButtons = document.querySelectorAll('.tab-btn');
-const tabSections = document.querySelectorAll('.tab-section');
+// --- 3. LÓGICA DE RECICLAJE ---
+document.getElementById('reciclaje-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const btnReciclaje = document.getElementById('btn-reciclaje');
+  btnReciclaje.innerText = "Guardando...";
+  btnReciclaje.disabled = true;
 
-tabButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    tabSections.forEach(sec => sec.classList.remove('active'));
+  const fecha = document.getElementById('fecha_reciclaje').value;
+  const tipo = document.getElementById('tipo_material').value;
+  const cantidad = parseFloat(document.getElementById('cantidad_reciclaje').value);
+  
+  // Insertar en la tabla 'reciclaje'
+  const { error } = await _supabase.from('reciclaje').insert([{
+    fecha: fecha,
+    tipo_material: tipo,
+    cantidad_kg: cantidad
+  }]);
 
-    button.classList.add('active');
+  if (error) {
+    alert("Error al guardar el reciclaje: " + error.message);
+  } else {
+    alert("¡Registro de reciclaje guardado con éxito! ♻️");
+    document.getElementById('reciclaje-form').reset();
+    cargarTotalReciclado(); // Actualizamos el contador automáticamente
+  }
 
-    const targetId = button.getAttribute('data-target');
-    const targetSection = document.getElementById(targetId);
-    targetSection.classList.add('active');
-
-    if (targetId === 'seccion-clima') {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-    }
-  });
-});
-
+  btnReciclaje.innerText = "
