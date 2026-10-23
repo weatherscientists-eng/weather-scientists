@@ -233,47 +233,97 @@ async function cargarTotalCompostado() {
 cargarTotalCompostado();
 
 // --- 3. LÓGICA DE RECICLAJE ---
-safeAddListener('reciclaje-form', 'submit', async (e) => {
-  e.preventDefault();
-  
-  const btnReciclaje = document.getElementById('btn-reciclaje');
-  if (btnReciclaje) {
-    btnReciclaje.innerText = "Guardando...";
-    btnReciclaje.disabled = true;
-  }
-
-  const fecha = document.getElementById('fecha_reciclaje').value;
-  const tipo = document.getElementById('tipo_material').value;
-  const cantidad = parseFloat(document.getElementById('cantidad_reciclaje').value);
-  
-  const { error } = await _supabase.from('reciclaje').insert([{
-    fecha: fecha,
-    tipo_material: tipo,
-    cantidad_kg: cantidad
-  }]);
-
-  if (error) {
-    alert("Error al guardar el reciclaje: " + error.message);
-  } else {
-    alert("¡Registro de reciclaje guardado con éxito! ♻️");
-    document.getElementById('reciclaje-form').reset();
-    cargarTotalReciclado();
-  }
-
-  if (btnReciclaje) {
-    btnReciclaje.innerText = "Registrar Reciclaje";
-    btnReciclaje.disabled = false;
-  }
-});
-
-async function cargarTotalReciclado() {
-  const { data, error } = await _supabase.from('reciclaje').select('cantidad_kg');
-  if (error) return;
-
-  const total = data.reduce((suma, registro) => suma + (registro.cantidad_kg || 0), 0);
-  const totalEl = document.getElementById('total-reciclado');
-  if (totalEl) totalEl.innerText = `${total.toFixed(1)} kg`;
+const materialesReciclaje = {
+ plastico: {nombre:'Plástico',icono:'🥤',total:'tot-plastico'},
+ carton_papel: {nombre:'Cartón y papel',icono:'📦',total:'tot-carton'},
+ vidrio: {nombre:'Vidrio',icono:'🍾',total:'tot-vidrio'},
+ metal: {nombre:'Metal',icono:'🥫',total:'tot-metal'},
+ ecoladrillos: {nombre:'Ecoladrillos',icono:'🧱',total:'tot-ecoladrillos'}
+};
+const fechaReciclaje = document.getElementById('fecha_reciclaje');
+const reciclajeStatus = document.getElementById('reciclaje-status');
+const formatoKg = value => new Intl.NumberFormat('es-CO',{maximumFractionDigits:2}).format(value) + ' kg';
+function iniciarFechaReciclaje() {
+ const hoy=horaColombia().slice(0,10);
+ fechaReciclaje.value=hoy;fechaReciclaje.max=hoy;
 }
+iniciarFechaReciclaje();
+fechaReciclaje.addEventListener('focus',()=>fechaReciclaje.max=horaColombia().slice(0,10));
+function mensajeReciclaje(texto,error=false) {
+ reciclajeStatus.textContent=texto;reciclajeStatus.classList.toggle('error',error);
+}
+safeAddListener('reciclaje-form','submit',async e=>{
+ e.preventDefault();
+ const button=document.getElementById('btn-reciclaje');
+ if(button.disabled) return;
+ const fecha=fechaReciclaje.value;
+ const tipo=document.getElementById('tipo_material').value;
+ const cantidad=Number(document.getElementById('cantidad_reciclaje').value);
+ if(!fecha || fecha>horaColombia().slice(0,10) || !materialesReciclaje[tipo] || !Number.isFinite(cantidad) || cantidad<=0) {
+  mensajeReciclaje('Revisa la fecha, el material y un peso mayor que cero.',true);return;
+ }
+ button.disabled=true;button.textContent='Guardando…';mensajeReciclaje('');
+ try {
+  const {error}=await _supabase.from('reciclaje').insert([{fecha,tipo_material:tipo,cantidad_kg:cantidad}]);
+  if(error) throw error;
+  document.getElementById('reciclaje-form').reset();iniciarFechaReciclaje();
+  mensajeReciclaje('¡Registro guardado! '+formatoKg(cantidad)+' de '+materialesReciclaje[tipo].nombre.toLowerCase()+'. Gracias por aportar 💚');
+  await cargarTotalReciclado();
+ } catch(error) {
+  mensajeReciclaje('No se pudo guardar. Tus datos siguen en el formulario. '+(error.message || 'Revisa la conexión e intenta de nuevo.'),true);
+ } finally {button.disabled=false;button.textContent='♻️ Registrar material';}
+});
+let cargandoReciclaje=false;
+async function cargarTotalReciclado() {
+ if(cargandoReciclaje) return;
+ cargandoReciclaje=true;
+ const feed=document.getElementById('historial-reciclaje');
+ const retry=document.getElementById('btn-recargar-reciclaje');
+ retry.disabled=true;
+ try {
+  let registros=[],desde=0;
+  while(true) {
+   const {data,error}=await _supabase.from('reciclaje').select('fecha,tipo_material,cantidad_kg').order('fecha',{ascending:false}).range(desde,desde+999);
+   if(error) throw error;
+   registros.push(...data);
+   if(data.length<1000) break;
+   desde+=1000;
+  }
+  const totales=Object.fromEntries(Object.keys(materialesReciclaje).map(k=>[k,0]));
+  let total=0;
+  registros.forEach(r=>{
+   const peso=Number(r.cantidad_kg);
+   if(!Number.isFinite(peso)||peso<=0) return;
+   total+=peso;if(r.tipo_material in totales) totales[r.tipo_material]+=peso;
+  });
+  for(const [tipo,material] of Object.entries(materialesReciclaje)) document.getElementById(material.total).textContent=formatoKg(totales[tipo]);
+  document.getElementById('total-reciclado').textContent=formatoKg(total);
+  const porcentaje=total; // Meta comunitaria de 100 kg.
+  document.getElementById('goal-percentage').textContent=new Intl.NumberFormat('es-CO',{maximumFractionDigits:1}).format(porcentaje)+'%';
+  const progress=document.getElementById('progress-bar-fill');
+  progress.style.width=Math.min(100,porcentaje)+'%';
+  document.getElementById('recycling-progress').setAttribute('aria-valuenow',Math.min(100,porcentaje));
+  feed.replaceChildren();
+  if(!registros.length) {const empty=document.createElement('p');empty.className='empty-feed';empty.textContent='Todavía no hay registros. ¡El primer aporte puede ser el tuyo!';feed.append(empty);}
+  registros.slice(0,10).forEach(r=>{
+   const material=materialesReciclaje[r.tipo_material] || {nombre:'Otro material',icono:'♻️'};
+   const row=document.createElement('article');row.className='recycling-entry';
+   const title=document.createElement('strong');title.textContent=material.icono+' '+material.nombre;
+   const amount=document.createElement('span');amount.textContent=formatoKg(Number(r.cantidad_kg)||0);
+   const date=document.createElement('small');
+   const fecha=new Date(String(r.fecha).slice(0,10)+'T12:00:00-05:00');
+   date.textContent=Number.isNaN(fecha.getTime()) ? 'Fecha no disponible' : fecha.toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric',timeZone:'America/Bogota'});
+   row.append(title,amount,date);feed.append(row);
+  });
+ } catch(error) {
+  feed.replaceChildren();
+  const warning=document.createElement('p');warning.className='recycling-error';warning.textContent='No se pudieron cargar los registros. Usa “Actualizar registros” para intentar de nuevo.';feed.append(warning);
+  document.querySelectorAll('#seccion-reciclaje .mat-card h4').forEach(el=>el.textContent='—');
+  document.getElementById('total-reciclado').textContent='—';
+  document.getElementById('goal-percentage').textContent='Sin datos';
+ } finally {cargandoReciclaje=false;retry.disabled=false;}
+}
+document.getElementById('btn-recargar-reciclaje').addEventListener('click',cargarTotalReciclado);
 cargarTotalReciclado();
 
 // --- 4. LÓGICA DE NAVEGACIÓN (TABS) ---
