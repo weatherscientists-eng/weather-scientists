@@ -1,6 +1,6 @@
 const SUPABASE_URL = 'AQUÍ_PEGA_TU_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'AQUÍ_PEGA_TU_ANON_KEY';
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ0b3JueXRsY3p5enljY2Nwa2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2MTMxNDEsImV4cCI6MjEwNjE4OTE0MX0.-UqHHTLbSwrTvKw2ChsKR2SUN38FXpmbMf_zatbjFHk';
+const _supabase = supabase.createClient(https://ftornytlczyzycccpkjv.supabase.co/rest/v1/);
 
 // --- 1. LÓGICA DEL MAPA Y CLIMA ---
 const map = L.map('map').setView([6.0560, -75.6280], 11);
