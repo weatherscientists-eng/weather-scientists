@@ -125,3 +125,64 @@ tabButtons.forEach(button => {
     }
   });
 });
+// --- LÓGICA DE COMPOSTAJE ---
+
+document.getElementById('compost-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const btnCompost = document.getElementById('btn-compost');
+  btnCompost.innerText = "Guardando...";
+  btnCompost.disabled = true;
+
+  const fecha = document.getElementById('fecha_compost').value;
+  const peso = parseFloat(document.getElementById('peso_kg').value);
+  const estado = document.getElementById('estado_paca').value;
+  const observaciones = document.getElementById('obs_compost').value;
+  const fotoInput = document.getElementById('foto_compost').files[0];
+  
+  let fotoUrl = null;
+
+  // Subir foto si existe
+  if (fotoInput) {
+    const fileName = `compost_${Date.now()}_${fotoInput.name}`;
+    const { data, error: storageError } = await _supabase.storage
+      .from('reportes-fotos') // Reutilizamos el mismo bucket por ahora
+      .upload(fileName, fotoInput);
+
+    if (!storageError) {
+      fotoUrl = `${SUPABASE_URL}/storage/v1/object/public/reportes-fotos/${fileName}`;
+    }
+  }
+
+  // Insertar en la tabla 'compostaje'
+  const { error } = await _supabase.from('compostaje').insert([{
+    fecha: fecha,
+    peso_kg: peso,
+    estado: estado,
+    observaciones: observaciones,
+    foto_url: fotoUrl
+  }]);
+
+  if (error) {
+    alert("Error al guardar el compostaje: " + error.message);
+  } else {
+    alert("¡Registro de compostaje guardado con éxito! 🌱");
+    document.getElementById('compost-form').reset();
+    cargarTotalCompostado(); // Actualizamos el contador
+  }
+
+  btnCompost.innerText = "Guardar Registro de Compostaje";
+  btnCompost.disabled = false;
+});
+
+// Función para sumar todos los kilos y mostrarlos en el contador
+async function cargarTotalCompostado() {
+  const { data, error } = await _supabase.from('compostaje').select('peso_kg');
+  if (error) return;
+
+  const total = data.reduce((suma, registro) => suma + (registro.peso_kg || 0), 0);
+  document.getElementById('total-compostado').innerText = `${total.toFixed(1)} kg`;
+}
+
+// Cargar el contador al iniciar la app
+cargarTotalCompostado();
