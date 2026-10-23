@@ -6,12 +6,20 @@
   <title>WS app | Weather Scientists</title>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css?v=2026.10.23.6" />
+  <link rel="stylesheet" href="styles.css?v=2026.10.23.7" />
   <!-- CDNs de Supabase y Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=2026.10.23.6" defer></script>
-<script src="updates.js?v=2026.10.23.6" defer></script>
+  <script src="app.js?v=2026.10.23.7" defer></script>
+<script src="updates.js?v=2026.10.23.7" defer></script>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <meta name="theme-color" content="#083c70">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="WS app">
+  <script src="/pwa.js?v=2026.10.23.7" defer></script>
 </head>
 <body>
 <aside id="update-banner" class="update-banner" hidden role="status" aria-live="polite"><div><strong>✨ Hay una nueva versión de WS app</strong><p>Envía tu registro pendiente antes de actualizar.</p></div><button type="button" id="btn-actualizar">Instalar actualización</button><button type="button" id="btn-posponer" class="secondary">Más tarde</button></aside>
@@ -29,6 +37,11 @@
     <button class="tab-btn" data-target="seccion-grupo">📖 Grupo</button>
     <button class="tab-btn" data-target="seccion-apoyanos">💚 Apóyanos</button>
   </nav>
+  <div class="install-panel" id="install-panel">
+    <span>📲 Lleva <strong>WS app</strong> en tu pantalla de inicio</span>
+    <button type="button" id="btn-instalar">Instalar WS app</button>
+    <p id="install-help" role="status" aria-live="polite" hidden></p>
+  </div>
 
   <main>
     <!-- 1. SECCIÓN CLIMA (Ya funcional) -->
