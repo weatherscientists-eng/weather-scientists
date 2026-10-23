@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Scientists (WS)</title>
+  <title>Weather Scientists & Eco</title>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="styles.css" />
@@ -14,44 +14,109 @@
 </head>
 <body>
   <header>
-    <h1>🌧️ Weather Scientists (WS)</h1>
-    <p>Reporte Climático Comunitario</p>
+    <h1>🌱 WS & Eco-Comunidad</h1>
+    <p>Reporte Climático y Acción Ambiental</p>
   </header>
 
+  <!-- Menú de Navegación -->
+  <nav class="tabs-nav">
+    <button class="tab-btn active" data-target="seccion-clima">🌧️ Clima</button>
+    <button class="tab-btn" data-target="seccion-compostaje">🍂 Compost</button>
+    <button class="tab-btn" data-target="seccion-reciclaje">♻️ Reciclaje</button>
+    <button class="tab-btn" data-target="seccion-grupo">📖 Grupo</button>
+    <button class="tab-btn" data-target="seccion-apoyanos">💚 Apóyanos</button>
+  </nav>
+
   <main>
-    <div id="map"></div>
+    <!-- 1. SECCIÓN CLIMA (Ya funcional) -->
+    <section id="seccion-clima" class="tab-section active">
+      <div id="map"></div>
+      <form id="report-form" class="card">
+        <h3>Nuevo Reporte Ciudadano</h3>
+        
+        <label for="tipo_evento">Tipo de Evento:</label>
+        <select id="tipo_evento" required>
+          <option value="derrumbe">🚨 Derrumbe / Deslizamiento</option>
+          <option value="lluvia">🌧️ Lluvia (Pluviómetro)</option>
+          <option value="viento">💨 Viento Fuerte</option>
+          <option value="granizo">🧊 Granizo</option>
+          <option value="otro">⚠️ Otro</option>
+        </select>
 
-    <form id="report-form">
-      <h3>Nuevo Reporte Ciudadano</h3>
+        <div id="campo-lluvia" style="display:none;">
+          <label for="medida_mm">Medida en Pluviómetro (mm):</label>
+          <input type="number" id="medida_mm" step="0.1" placeholder="Ej: 15.2">
+        </div>
 
-      <label for="tipo_evento">Tipo de Evento:</label>
-      <select id="tipo_evento" required>
-        <option value="derrumbe">🚨 Derrumbe / Deslizamiento</option>
-        <option value="lluvia">🌧️ Lluvia (Pluviómetro)</option>
-        <option value="viento">💨 Viento Fuerte</option>
-        <option value="granizo">🧊 Granizo</option>
-        <option value="otro">⚠️ Otro</option>
-      </select>
+        <label for="descripcion">Observaciones:</label>
+        <textarea id="descripcion" placeholder="Describe lo sucedido..."></textarea>
 
-      <div id="campo-lluvia" style="display:none;">
-        <label for="medida_mm">Medida en Pluviómetro (mm):</label>
-        <input type="number" id="medida_mm" step="0.1" placeholder="Ej: 15.2">
+        <label for="foto">Fotografía del evento:</label>
+        <input type="file" id="foto" accept="image/*" capture="environment">
+
+        <button type="button" id="btn-geolocalizar">📍 Usar mi ubicación actual</button>
+        <p id="geo-status">Ubicación no seleccionada</p>
+
+        <input type="hidden" id="latitud">
+        <input type="hidden" id="longitud">
+
+        <button type="submit" id="btn-enviar">Guardar Reporte</button>
+      </form>
+    </section>
+
+    <!-- 2. SECCIÓN COMPOSTAJE -->
+    <section id="seccion-compostaje" class="tab-section">
+      <div class="card">
+        <h2>🍂 Registro de Compostaje</h2>
+        <p>Aquí pondremos el formulario para registrar las pacas digestoras y los kilos de residuos orgánicos procesados.</p>
+        <!-- Pronto agregaremos el formulario aquí -->
       </div>
+    </section>
 
-      <label for="descripcion">Observaciones:</label>
-      <textarea id="descripcion" placeholder="Describe lo sucedido..."></textarea>
+    <!-- 3. SECCIÓN RECICLAJE -->
+    <section id="seccion-reciclaje" class="tab-section">
+      <div class="card">
+        <h2>♻️ Registro de Reciclaje</h2>
+        <p>Aquí pondremos las metas de reciclaje, plástico, cartón y ecoladrillos.</p>
+        <!-- Pronto agregaremos el formulario y gráficos aquí -->
+      </div>
+    </section>
 
-      <label for="foto">Fotografía del evento:</label>
-      <input type="file" id="foto" accept="image/*" capture="environment">
+    <!-- 4. SECCIÓN NUESTRO GRUPO -->
+    <section id="seccion-grupo" class="tab-section">
+      <div class="card">
+        <h2>📖 Bitácora Virtual</h2>
+        <p>Aquí se verá el muro con las actividades, talleres y productos realizados por el grupo.</p>
+        <!-- Pronto agregaremos el feed de noticias aquí -->
+      </div>
+    </section>
 
-      <button type="button" id="btn-geolocalizar">📍 Usar mi ubicación actual</button>
-      <p id="geo-status">Ubicación no seleccionada</p>
+    <!-- 5. SECCIÓN APÓYANOS (Estructura base) -->
+    <section id="seccion-apoyanos" class="tab-section">
+      <div class="card center-text">
+        <h2>💚 Apoya nuestra labor</h2>
+        <p>Tu aporte nos permite seguir cuidando el medio ambiente.</p>
+        
+        <div class="nequi-box">
+          <h3>📱 Donaciones vía Nequi</h3>
+          <!-- Cambia este número por el tuyo -->
+          <p class="nequi-number">300 000 0000</p>
+          <div class="qr-placeholder">
+            <p>Pon tu imagen del QR de Nequi aquí</p>
+          </div>
+        </div>
 
-      <input type="hidden" id="latitud">
-      <input type="hidden" id="longitud">
+        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ddd;">
 
-      <button type="submit" id="btn-enviar">Guardar Reporte</button>
-    </form>
+        <h3>🌱 Compra nuestro Abono Orgánico</h3>
+        <p>Excelente para tus plantas. Empaque de 2kg.</p>
+        <!-- Recuerda cambiar el número 573000000000 por tu número real de WhatsApp con código de país (57 para Colombia) -->
+        <a href="https://wa.me/573000000000?text=¡Hola!%20Vengo%20de%20la%20App%20Weather%20Scientists%20y%20quiero%20comprar%20abono%20orgánico." target="_blank" class="btn-whatsapp">
+          💬 Pedir por WhatsApp
+        </a>
+      </div>
+    </section>
+
   </main>
 </body>
 </html>
