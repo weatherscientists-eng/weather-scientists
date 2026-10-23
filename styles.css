@@ -1,15 +1,24 @@
-/* RESET Y ESTILOS GLOBALES */
-* { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
+/* ==========================================
+   1. RESET Y VARIABLES GLOBALES
+   ========================================== */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
   --forest: #155d50;
+  --forest-hover: #0b493e;
   --ink: #193e37;
   --muted: #61756f;
   --line: #dce8e2;
+  --bg-main: #f0f5f1;
 }
 
 body {
-  background: #f0f5f1;
+  background: var(--bg-main);
   color: var(--ink);
   padding: 24px 18px 48px;
 }
@@ -22,7 +31,9 @@ main {
   gap: 1rem;
 }
 
-/* BRAND HEADER */
+/* ==========================================
+   2. IDENTIDAD Y BRAND HEADER
+   ========================================== */
 .brand-header {
   max-width: 1120px;
   display: flex;
@@ -39,6 +50,19 @@ main {
   margin: 0 auto 24px;
 }
 
+.brand-header:after {
+  content: "";
+  position: absolute;
+  width: 270px;
+  height: 270px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  right: -90px;
+  top: -130px;
+  box-shadow: 0 0 0 45px rgba(255, 255, 255, 0.015), 0 0 0 90px rgba(255, 255, 255, 0.01);
+  pointer-events: none;
+}
+
 .brand-logo {
   width: 144px;
   height: 144px;
@@ -50,7 +74,61 @@ main {
   background: white;
 }
 
-/* NAVEGACIÓN POR PESTAÑAS (TABS) */
+.brand-copy {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.brand-header .brand-kicker {
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  font-weight: 750;
+  color: #a5dcfa;
+  margin: 0 0 6px;
+}
+
+.brand-header h1 {
+  font-size: clamp(2.7rem, 6vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -2px;
+  font-weight: 850;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.brand-header h1 span { font-weight: 400; color: #bce9ff; }
+.brand-header h1 i {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: #ffc342;
+  align-self: center;
+  margin-left: 4px;
+  box-shadow: 0 0 0 6px rgba(255, 195, 66, 0.08);
+}
+
+.brand-header .brand-motto { font-size: 1rem; color: #f3f8ff; margin: 10px 0 0; line-height: 1.5; }
+.brand-header .brand-school { font-size: 0.75rem; color: #a9cee7; margin-top: 8px; line-height: 1.6; }
+.brand-school span { margin: 0 5px; }
+
+.brand-label {
+  margin-left: auto;
+  align-self: flex-end;
+  max-width: 145px;
+  font-size: 0.72rem;
+  color: #b7d9ec;
+  line-height: 1.8;
+  border-left: 2px solid #ffc342;
+  padding-left: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================
+   3. NAVEGACIÓN Y PESTAÑAS (TABS)
+   ========================================== */
 .tabs-nav {
   display: flex;
   flex-wrap: wrap;
@@ -80,11 +158,7 @@ main {
   box-shadow: 0 3px 8px rgba(21, 93, 80, 0.2);
 }
 
-/* OCULTAR Y MOSTRAR SECCIONES */
-.tab-section {
-  display: none !important;
-}
-
+.tab-section { display: none !important; }
 .tab-section.active {
   display: block !important;
   animation: fadeIn 0.4s ease-in-out;
@@ -95,7 +169,9 @@ main {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* FORMULARIOS Y TARJETAS */
+/* ==========================================
+   4. FORMULARIOS, BOTONES Y TARJETAS
+   ========================================== */
 .card {
   background: white;
   padding: 1.5rem;
@@ -117,6 +193,12 @@ label {
   color: var(--ink);
 }
 
+label span {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
 input, select, textarea {
   background: #fbfcfa;
   border: 1px solid #d5e1da;
@@ -125,14 +207,17 @@ input, select, textarea {
   padding: 12px;
   font-size: 16px;
   width: 100%;
+  min-width: 0;
 }
 
-input:focus, select:focus, textarea:focus {
+textarea { resize: vertical; }
+
+input:focus, select:focus, textarea:focus, button:focus-visible, #map:focus-visible {
   outline: 3px solid #a6ca84;
   outline-offset: 2px;
 }
 
-button {
+button, #btn-geolocalizar {
   background: var(--forest);
   color: white;
   border: none;
@@ -142,21 +227,93 @@ button {
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s;
+  min-height: 44px;
 }
 
-button:hover { background: #0b493e; }
+button:hover, #btn-geolocalizar:hover { background: var(--forest-hover); }
+button:disabled { opacity: 0.6; cursor: wait; }
 
-.btn-secondary {
+.btn-secondary, .secondary {
   background: #edf5f1;
   color: var(--forest);
   border: 1px solid #bed6c9;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover, .secondary:hover, .secondary[aria-pressed="true"] {
   background: #d6e9dd;
+  color: #164b3f;
 }
 
-/* MAPA */
+.text-button {
+  background: #f0f5f1;
+  color: var(--forest);
+  min-height: 40px;
+  font-size: 0.8rem;
+}
+
+.text-button:hover {
+  background: #dcebe2;
+  color: var(--forest);
+}
+
+/* ==========================================
+   5. REPORTES Y MAPA (LEAFLET)
+   ========================================== */
+.report-intro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 18px;
+  padding: 14px 18px;
+  background: #e8f1f7;
+  border: 1px solid #d4e4ee;
+  border-radius: 16px;
+}
+
+.intro-icon { font-size: 1.8rem; }
+.report-intro h2 { font-size: 1.1rem; color: #123e63; letter-spacing: -0.3px; }
+.report-intro p { font-size: 0.82rem; color: #5c7383; margin-top: 4px; }
+
+.report-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 22px;
+  background: none;
+  padding: 0;
+  box-shadow: none;
+  width: 100%;
+  margin: 0;
+}
+
+.location-card, .details-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 24px;
+  border-radius: 22px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-heading { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 6px; }
+.step {
+  display: grid;
+  place-items: center;
+  background: #eaf2d9;
+  color: #456327;
+  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  font-weight: 800;
+}
+
+.step-heading h3 { font-size: 1.15rem; margin-bottom: 4px; }
+.step-heading p, .hint { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+.location-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
 #map {
   height: 350px;
   width: 100%;
@@ -164,9 +321,102 @@ button:hover { background: #0b493e; }
   z-index: 0;
 }
 
-.center-text { text-align: center; }
+#map.picking { outline: 3px solid #93bc66; cursor: crosshair; }
+#map.picking .leaflet-container { cursor: crosshair; }
+#map .leaflet-control-zoom a { padding: 0; }
 
-/* SECCIÓN APÓYANOS */
+#geo-status {
+  text-align: left;
+  background: #f1f6ed;
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #41663a;
+  line-height: 1.5;
+  min-height: 42px;
+}
+
+.map-caption { border-top: 1px solid var(--line); padding-top: 12px; font-size: 0.76rem; color: var(--muted); }
+.rain-box { background: #eef5fa; padding: 14px; border-radius: 12px; }
+.rain-box input, .rain-box select { margin: 8px 0 12px; }
+
+.photo-box { border: 1px dashed #a9c4b5; border-radius: 14px; padding: 14px; background: #fafcf8; }
+.photo-box p { margin: 5px 0 10px; }
+.photo-box input { font-size: 0.8rem; background: white; }
+.photo-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+
+.photo-box input[hidden], #foto-preview[hidden] { display: none; }
+#foto-preview { max-width: 100%; max-height: 180px; object-fit: contain; border-radius: 10px; margin-top: 10px; }
+
+.privacy-note { font-size: 0.75rem; line-height: 1.5; color: var(--muted); }
+
+#report-status:empty { display: none; }
+#report-status { padding: 12px; border-radius: 10px; background: #edf5f1; line-height: 1.5; font-size: 0.85rem; }
+#report-status.error { background: #fff0e9; color: #973e25; }
+
+.leaflet-popup-content p { white-space: pre-line; }
+.leaflet-popup-content img { max-width: 100%; }
+
+/* ==========================================
+   6. RECICLAJE COMUNITARIO
+   ========================================== */
+.recycling-hero { padding: 24px; }
+.recycling-header-text h2 { font-size: 1.4rem; letter-spacing: -0.4px; }
+.recycling-header-text p { color: var(--muted); line-height: 1.6; margin-top: 8px; }
+
+.goal-container { margin: 20px 0; }
+.goal-info { display: flex; justify-content: space-between; gap: 12px; font-size: 0.85rem; margin-bottom: 8px; }
+.progress-bar-bg { height: 12px; border-radius: 20px; background: #e8efea; overflow: hidden; }
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #238568, #a5c65f);
+  border-radius: 20px;
+  transition: width 0.3s;
+}
+
+.recycling-total { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+.recycling-total > span { font-size: 0.85rem; color: var(--muted); }
+.recycling-total strong { font-size: 2rem; color: var(--forest); }
+.recycling-total small { flex-basis: 100%; color: var(--muted); }
+
+.recycling-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.mat-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 10px;
+  background: #f7faf6;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+}
+
+.mat-icon { font-size: 1.5rem; }
+.mat-card small { font-size: 0.75rem; color: var(--muted); }
+.mat-card h4 { font-size: 1.1rem; margin-top: 4px; overflow-wrap: anywhere; }
+
+.recycling-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.recycling-layout .card { min-width: 0; }
+.recycling-layout form { padding: 24px; }
+
+.recycling-history-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 12px; }
+.recycling-history-heading h3 { font-size: 1.05rem; }
+.recycling-history-heading button { width: auto; font-size: 0.72rem; padding: 9px; min-height: 40px; }
+
+.recycling-feed { display: flex; flex-direction: column; gap: 10px; }
+.recycling-entry { display: grid; grid-template-columns: 1fr auto; gap: 6px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+.recycling-entry strong { font-size: 0.9rem; }
+.recycling-entry span { font-weight: 750; color: var(--forest); }
+.recycling-entry small { color: var(--muted); grid-column: 1 / -1; }
+
+.empty-feed { padding: 22px 12px; text-align: center; color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+#reciclaje-status:empty { display: none; }
+#reciclaje-status, .recycling-error { border-radius: 12px; padding: 12px; font-size: 0.85rem; line-height: 1.6; }
+#reciclaje-status { background: #edf6eb; }
+.recycling-error, #reciclaje-status.error { background: #fff0e9; color: #973e25; }
+
+/* ==========================================
+   7. SECCIÓN APÓYANOS (NEQUI & WHATSAPP)
+   ========================================== */
 .nequi-box {
   background: #f4f6f8;
   border: 2px dashed #da0081;
@@ -176,12 +426,7 @@ button:hover { background: #0b493e; }
 }
 
 .nequi-box h3 { color: #da0081; }
-
-.nequi-number {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0.5rem 0;
-}
+.nequi-number { font-size: 1.5rem; font-weight: bold; margin: 0.5rem 0; }
 
 .qr-placeholder {
   background: #e0e4e8;
@@ -198,7 +443,7 @@ button:hover { background: #0b493e; }
 
 .btn-whatsapp {
   display: inline-block;
-  background: #25D366;
+  background: #25d366;
   color: white;
   padding: 1rem 2rem;
   border-radius: 30px;
@@ -211,44 +456,114 @@ button:hover { background: #0b493e; }
 
 .btn-whatsapp:hover { transform: scale(1.05); }
 
-/* RESPONSIVE */
-@media(max-width:760px) {
-  body { padding: 18px 12px 32px; }
-  .brand-header { padding: 22px 18px; border-radius: 20px; }
-  .brand-logo { width: 94px; height: 94px; }
-  #map { height: 300px; }
+/* ==========================================
+   8. COMPONENTES PWA (BANNER DE ACTUALIZACIÓN & INSTALACIÓN)
+   ========================================== */
+.update-banner[hidden], .install-panel[hidden], #install-help[hidden] { display: none; }
+
+.update-banner {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: calc(100% - 24px);
+  max-width: 750px;
+  border: 1px solid #bfd5e9;
+  background: #fff;
+  box-shadow: 0 8px 40px rgba(7, 46, 85, 0.25);
+  border-radius: 18px;
+  padding: 18px;
+  color: #123e63;
 }
 
-/* Componentes de Clima: mantener junto al formulario de reportes. */
-.report-layout{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:22px;background:none;padding:0;box-shadow:none}.location-card,.details-card{background:#fff;border:1px solid var(--line);padding:24px;border-radius:22px;min-width:0;display:flex;flex-direction:column;gap:12px}.step-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px}.step{display:grid;place-items:center;background:#eaf2d9;color:#456327;border-radius:12px;width:34px;height:34px;flex-shrink:0;font-weight:800}.step-heading h3{font-size:1.15rem;margin-bottom:4px}.step-heading p,.hint{font-size:.8rem;color:var(--muted);line-height:1.5}.location-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button,#btn-geolocalizar{background:var(--forest);border-radius:12px;padding:13px;font-size:.9rem;min-height:44px}button:hover,#btn-geolocalizar:hover{background:#0b493e}.secondary{background:#edf5f1;color:var(--forest);border:1px solid #bed6c9}.secondary:hover,.secondary[aria-pressed=true]{background:#d6e9dd;color:#164b3f}.text-button{background:#f0f5f1;color:var(--forest);min-height:40px;font-size:.8rem}.text-button:hover{background:#dcebe2;color:var(--forest)}#map{height:350px;border-radius:14px;box-shadow:none;z-index:0}#map.picking{outline:3px solid #93bc66}#map.picking .leaflet-container,#map.picking{cursor:crosshair}#geo-status{text-align:left;background:#f1f6ed;border-radius:10px;padding:10px 12px;color:#41663a;line-height:1.5;min-height:42px}.map-caption{border-top:1px solid var(--line);padding-top:12px;font-size:.76rem;color:var(--muted)}label{font-size:.88rem;font-weight:650}label span{font-size:.75rem;color:var(--muted);font-weight:400}input,select,textarea{background:#fbfcfa;border:1px solid #d5e1da;border-radius:10px;color:var(--ink);padding:12px;font-size:16px;min-width:0}textarea{resize:vertical}input:focus,select:focus,textarea:focus,button:focus-visible,#map:focus-visible{outline:3px solid #a6ca84;outline-offset:2px}.rain-box{background:#eef5fa;padding:14px;border-radius:12px}.rain-box input,.rain-box select{margin:8px 0 12px}.photo-box{border:1px dashed #a9c4b5;border-radius:14px;padding:14px;background:#fafcf8}.photo-box p{margin:5px 0 10px}.photo-box input{font-size:.8rem;background:white}#foto-preview{max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:10px}.privacy-note{font-size:.75rem;line-height:1.5;color:var(--muted)}#report-status:empty{display:none}#report-status{padding:12px;border-radius:10px;background:#edf5f1;line-height:1.5;font-size:.85rem}#report-status.error{background:#fff0e9;color:#973e25}#btn-enviar{background:var(--forest);font-size:1rem}button:disabled{opacity:.6;cursor:wait}.leaflet-popup-content p{white-space:pre-line}.leaflet-popup-content img{max-width:100%}@media(min-width:900px){.location-card{position:sticky;top:18px}}@media(max-width:760px){body{padding:18px 12px 32px}.report-layout{grid-template-columns:1fr;gap:16px}.report-hero{padding:24px;border-radius:20px}.location-card,.details-card{padding:18px;border-radius:18px}#map{height:300px}.tabs-nav{gap:6px}.tab-btn{padding:9px 12px;font-size:.8rem}.location-actions button{font-size:.8rem;padding:10px 8px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* Identidad Weather Scientists */
-.brand-header{max-width:1120px;display:flex;align-items:center;gap:26px;text-align:left;padding:26px 32px;border-radius:26px;background:linear-gradient(115deg,#062d55,#0b528b 75%,#146a9a);color:white;position:relative;overflow:hidden;box-shadow:0 10px 30px #073c7015;margin:0 auto 24px}
-.brand-header:after{content:"";position:absolute;width:270px;height:270px;border:1px solid #ffffff12;border-radius:50%;right:-90px;top:-130px;box-shadow:0 0 0 45px #ffffff04,0 0 0 90px #ffffff03;pointer-events:none}
-.brand-logo{width:144px;height:144px;object-fit:contain;border-radius:50%;flex-shrink:0;box-shadow:0 6px 22px #001c4550;border:3px solid #ffffffd9;background:white}
-.brand-copy{min-width:0;position:relative;z-index:1}.brand-header .brand-kicker{font-size:.72rem;letter-spacing:3px;font-weight:750;color:#a5dcfa;margin:0 0 6px}
-.brand-header h1{font-size:clamp(2.7rem,6vw,4rem);line-height:1.08;letter-spacing:-2px;font-weight:850;display:flex;gap:10px;align-items:baseline}.brand-header h1 span{font-weight:400;color:#bce9ff}.brand-header h1 i{height:10px;width:10px;border-radius:50%;background:#ffc342;align-self:center;margin-left:4px;box-shadow:0 0 0 6px #ffc34216}
-.brand-header .brand-motto{font-size:1rem;color:#f3f8ff;margin:10px 0 0;line-height:1.5}.brand-header .brand-school{font-size:.75rem;color:#a9cee7;margin-top:8px;line-height:1.6}.brand-school span{margin:0 5px}.brand-label{margin-left:auto;align-self:flex-end;max-width:145px;font-size:.72rem;color:#b7d9ec;line-height:1.8;border-left:2px solid #ffc342;padding-left:14px;position:relative;z-index:1}
-@media(max-width:760px){.brand-header{gap:17px;padding:22px 18px;border-radius:20px}.brand-logo{width:94px;height:94px}.brand-header .brand-kicker{font-size:.59rem;letter-spacing:1.7px}.brand-header h1{font-size:2.7rem}.brand-header .brand-motto{font-size:.8rem;margin-top:6px}.brand-header .brand-school{font-size:.65rem}.brand-label{display:none}}
-@media(max-width:390px){.brand-logo{width:78px;height:78px}.brand-header{gap:12px;padding:18px 14px}.brand-header h1{font-size:2.25rem}.brand-header .brand-kicker{letter-spacing:1px}}
+.update-banner div { flex: 1; }
+.update-banner p { font-size: 0.78rem; margin-top: 4px; color: #617582; }
+.update-banner button { width: auto; white-space: nowrap; background: #0b528b; font-size: 0.82rem; }
+.update-banner .secondary { background: #edf4fa; color: #0b528b; }
 
-.report-intro{display:flex;align-items:center;gap:12px;margin:4px 0 20px;padding:14px 18px;background:#e8f1f7;border:1px solid #d4e4ee;border-radius:16px}.intro-icon{font-size:1.8rem}.report-intro h2{font-size:1.1rem;color:#123e63;letter-spacing:-.3px}.report-intro p{font-size:.82rem;color:#5c7383;margin-top:4px}.photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.photo-actions button{font-size:.82rem}.update-banner[hidden]{display:none}.update-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;gap:12px;align-items:center;width:calc(100% - 24px);max-width:750px;border:1px solid #bfd5e9;background:#fff;box-shadow:0 8px 40px #072e5540;border-radius:18px;padding:18px;color:#123e63}.update-banner div{flex:1}.update-banner p{font-size:.78rem;margin-top:4px;color:#617582}.update-banner button{width:auto;white-space:nowrap;background:#0b528b;font-size:.82rem}.update-banner .secondary{background:#edf4fa;color:#0b528b}@media(max-width:600px){.update-banner{flex-wrap:wrap}.update-banner div{flex-basis:100%}.update-banner button{flex:1}.report-intro{padding:12px}.report-intro h2{font-size:.98rem}.photo-actions{grid-template-columns:1fr}}
+.install-panel {
+  max-width: 1120px;
+  margin: -8px auto 20px;
+  padding: 12px 16px;
+  border: 1px solid #d0e1ed;
+  border-radius: 14px;
+  background: #eaf3fa;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: #123e63;
+  font-size: 0.85rem;
+}
 
-/* Ajustes de ancho y controles accesibles */
-.report-layout{width:100%;margin:0}
-.location-actions button,.photo-actions button,#btn-enviar{width:100%}
-.details-card input,.details-card select,.location-card input{max-width:100%}
-.photo-box input[hidden],#foto-preview[hidden]{display:none}
-#map .leaflet-control-zoom a{padding:0}
-.report-intro{margin-bottom:18px}
-@media(max-width:760px){.location-card{position:static}.brand-copy{overflow-wrap:break-word}}
+.install-panel button { width: auto; background: #0b528b; padding: 10px 16px; font-size: 0.82rem; min-height: 44px; }
+#install-help { flex-basis: 100%; font-size: 0.82rem; line-height: 1.6; color: #365c77; margin: 0; }
 
-/* Reciclaje comunitario */
-.recycling-hero{padding:24px}.recycling-header-text h2{font-size:1.4rem;letter-spacing:-.4px}.recycling-header-text p{color:var(--muted);line-height:1.6;margin-top:8px}.goal-container{margin:20px 0}.goal-info{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;margin-bottom:8px}.progress-bar-bg{height:12px;border-radius:20px;background:#e8efea;overflow:hidden}.progress-bar-fill{height:100%;background:linear-gradient(90deg,#238568,#a5c65f);border-radius:20px;transition:width .3s}.recycling-total{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:18px 0}.recycling-total>span{font-size:.85rem;color:var(--muted)}.recycling-total strong{font-size:2rem;color:var(--forest)}.recycling-total small{flex-basis:100%;color:var(--muted)}.recycling-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.mat-card{border:1px solid var(--line);border-radius:14px;padding:14px 10px;background:#f7faf6;display:flex;gap:8px;align-items:center;min-width:0}.mat-icon{font-size:1.5rem}.mat-card small{font-size:.75rem;color:var(--muted)}.mat-card h4{font-size:1.1rem;margin-top:4px;overflow-wrap:anywhere}.recycling-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}.recycling-layout .card{min-width:0}.recycling-layout input,.recycling-layout select{width:100%}.recycling-layout form{padding:24px}.recycling-history-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.recycling-history-heading h3{font-size:1.05rem}.recycling-history-heading button{width:auto;font-size:.72rem;padding:9px;min-height:40px}.recycling-feed{display:flex;flex-direction:column;gap:10px}.recycling-entry{display:grid;grid-template-columns:1fr auto;gap:6px;padding:14px;border:1px solid var(--line);border-radius:12px}.recycling-entry strong{font-size:.9rem}.recycling-entry span{font-weight:750;color:var(--forest)}.recycling-entry small{color:var(--muted);grid-column:1/-1}.empty-feed{padding:22px 12px;text-align:center;color:var(--muted);font-size:.9rem;line-height:1.6}.recycling-error,#reciclaje-status.error{background:#fff0e9;color:#973e25}#reciclaje-status:empty{display:none}#reciclaje-status,.recycling-error{border-radius:12px;padding:12px;font-size:.85rem;line-height:1.6}#reciclaje-status{background:#edf6eb}#btn-reciclaje{width:100%}@media(max-width:900px){.recycling-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:760px){.recycling-layout{grid-template-columns:1fr;gap:0}.recycling-hero,.recycling-layout form{padding:18px}.recycling-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.recycling-history-heading{flex-wrap:wrap}}
+/* ==========================================
+   9. MEDIA QUERIES (RESPONSIVE)
+   ========================================== */
+@media (min-width: 900px) {
+  .location-card { position: sticky; top: 18px; }
+}
 
+@media (max-width: 900px) {
+  .recycling-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 
-/* Instalación PWA */
-.install-panel[hidden],#install-help[hidden]{display:none}
-.install-panel{max-width:1120px;margin:-8px auto 20px;padding:12px 16px;border:1px solid #d0e1ed;border-radius:14px;background:#eaf3fa;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#123e63;font-size:.85rem}
-.install-panel button{width:auto;background:#0b528b;padding:10px 16px;font-size:.82rem;min-height:44px}
-#install-help{flex-basis:100%;font-size:.82rem;line-height:1.6;color:#365c77;margin:0}
-@media(max-width:600px){.install-panel>span{flex:1;min-width:150px}.install-panel button{font-size:.78rem}}
+@media (max-width: 760px) {
+  body { padding: 18px 12px 32px; }
+  
+  .brand-header { gap: 17px; padding: 22px 18px; border-radius: 20px; }
+  .brand-logo { width: 94px; height: 94px; }
+  .brand-header .brand-kicker { font-size: 0.59rem; letter-spacing: 1.7px; }
+  .brand-header h1 { font-size: 2.7rem; }
+  .brand-header .brand-motto { font-size: 0.8rem; margin-top: 6px; }
+  .brand-header .brand-school { font-size: 0.65rem; }
+  .brand-label { display: none; }
+  .brand-copy { overflow-wrap: break-word; }
+
+  .report-layout, .recycling-layout { grid-template-columns: 1fr; gap: 16px; }
+  .location-card, .details-card, .recycling-hero, .recycling-layout form { padding: 18px; border-radius: 18px; }
+  .location-card { position: static; }
+  
+  #map { height: 300px; }
+  .tabs-nav { gap: 6px; }
+  .tab-btn { padding: 9px 12px; font-size: 0.8rem; }
+  .location-actions button { font-size: 0.8rem; padding: 10px 8px; }
+  
+  .recycling-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .recycling-history-heading { flex-wrap: wrap; }
+}
+
+@media (max-width: 600px) {
+  .update-banner { flex-wrap: wrap; }
+  .update-banner div { flex-basis: 100%; }
+  .update-banner button { flex: 1; }
+  
+  .report-intro { padding: 12px; }
+  .report-intro h2 { font-size: 0.98rem; }
+  .photo-actions { grid-template-columns: 1fr; }
+  
+  .install-panel > span { flex: 1; min-width: 150px; }
+  .install-panel button { font-size: 0.78rem; }
+}
+
+@media (max-width: 390px) {
+  .brand-logo { width: 78px; height: 78px; }
+  .brand-header { gap: 12px; padding: 18px 14px; }
+  .brand-header h1 { font-size: 2.25rem; }
+  .brand-header .brand-kicker { letter-spacing: 1px; }
+}
+
+/* Acceso con reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
