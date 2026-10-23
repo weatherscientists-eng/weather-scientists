@@ -64,12 +64,41 @@
       </form>
     </section>
 
-    <!-- 2. SECCIÓN COMPOSTAJE -->
+    <!-- 2. SECCIÓN COMPOSTAJE (ACTUALIZADA) -->
     <section id="seccion-compostaje" class="tab-section">
       <div class="card">
-        <h2>🍂 Registro de Compostaje</h2>
-        <p>Aquí pondremos el formulario para registrar las pacas digestoras y los kilos de residuos orgánicos procesados.</p>
-        <!-- Pronto agregaremos el formulario aquí -->
+        <h2>🍂 Registro de Compostaje / Pacas</h2>
+        <p>Registra el ingreso de residuos orgánicos para llevar la cuenta de nuestro impacto positivo.</p>
+        
+        <form id="compost-form" style="margin-top: 1rem;">
+          <label for="fecha_compost">Fecha de ingreso:</label>
+          <input type="date" id="fecha_compost" required>
+
+          <label for="peso_kg">Peso de residuos (kg):</label>
+          <input type="number" id="peso_kg" step="0.1" placeholder="Ej: 5.5" required>
+
+          <label for="estado_paca">Estado del proceso:</label>
+          <select id="estado_paca" required>
+            <option value="llenado">🟢 Fase de llenado</option>
+            <option value="maduracion">🟡 En maduración</option>
+            <option value="cosecha">🟤 Lista para cosechar (Abono)</option>
+          </select>
+
+          <label for="obs_compost">Observaciones:</label>
+          <textarea id="obs_compost" placeholder="Ej: Mucha cáscara de cítricos, se agregó aserrín..."></textarea>
+
+          <label for="foto_compost">Foto de la paca/compostera (Opcional):</label>
+          <input type="file" id="foto_compost" accept="image/*" capture="environment">
+
+          <button type="submit" id="btn-compost">Guardar Registro de Compostaje</button>
+        </form>
+      </div>
+
+      <!-- Contador de Total Acumulado -->
+      <div class="card center-text">
+        <h3>🏆 Impacto del Grupo</h3>
+        <p>Total de residuos salvados del relleno sanitario:</p>
+        <h2 id="total-compostado" style="color: #28a745; font-size: 2rem;">0 kg</h2>
       </div>
     </section>
 
@@ -91,7 +120,7 @@
       </div>
     </section>
 
-    <!-- 5. SECCIÓN APÓYANOS (Estructura base) -->
+    <!-- 5. SECCIÓN APÓYANOS -->
     <section id="seccion-apoyanos" class="tab-section">
       <div class="card center-text">
         <h2>💚 Apoya nuestra labor</h2>
@@ -110,7 +139,7 @@
 
         <h3>🌱 Compra nuestro Abono Orgánico</h3>
         <p>Excelente para tus plantas. Empaque de 2kg.</p>
-        <!-- Recuerda cambiar el número 573000000000 por tu número real de WhatsApp con código de país (57 para Colombia) -->
+        <!-- Recuerda cambiar el número 573000000000 por tu número real de WhatsApp -->
         <a href="https://wa.me/573000000000?text=¡Hola!%20Vengo%20de%20la%20App%20Weather%20Scientists%20y%20quiero%20comprar%20abono%20orgánico." target="_blank" class="btn-whatsapp">
           💬 Pedir por WhatsApp
         </a>
