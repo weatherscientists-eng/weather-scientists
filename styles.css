@@ -1,24 +1,15 @@
-/* ========================================================
-   ESTILOS GENERALES Y RESET
-   ======================================================== */
-* {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+/* RESET Y ESTILOS GLOBALES */
+* { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; }
 
 :root {
   --forest: #155d50;
-  --forest-dark: #0b493e;
   --ink: #193e37;
   --muted: #61756f;
   --line: #dce8e2;
-  --bg-app: #f0f5f1;
 }
 
 body {
-  background: var(--bg-app);
+  background: #f0f5f1;
   color: var(--ink);
   padding: 24px 18px 48px;
 }
@@ -28,335 +19,132 @@ main {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
-/* ========================================================
-   HEADER DE MARCA (BRAND HEADER)
-   ======================================================== */
+/* BRAND HEADER */
 .brand-header {
   max-width: 1120px;
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 24px 30px;
-  border-radius: 22px;
+  gap: 26px;
+  text-align: left;
+  padding: 26px 32px;
+  border-radius: 26px;
   background: linear-gradient(115deg, #062d55, #0b528b 75%, #146a9a);
   color: white;
-  margin: 0 auto 16px;
-  box-shadow: 0 10px 25px rgba(7, 60, 112, 0.15);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(7, 60, 112, 0.15);
+  margin: 0 auto 24px;
 }
 
 .brand-logo {
-  width: 110px;
-  height: 110px;
+  width: 144px;
+  height: 144px;
   object-fit: contain;
   border-radius: 50%;
   flex-shrink: 0;
-  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 22px rgba(0, 28, 69, 0.31);
+  border: 3px solid rgba(255, 255, 255, 0.85);
   background: white;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-/* ========================================================
-   NAVEGACIÓN POR PESTAÑAS (TABS)
-   ======================================================== */
+/* NAVEGACIÓN POR PESTAÑAS (TABS) */
 .tabs-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
 }
 
 .tab-btn {
-  background: #ffffff;
+  background: #fff;
   color: var(--muted);
-  border: 1px solid var(--line);
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-weight: 700;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: bold;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s;
   width: auto;
 }
 
-.tab-btn:hover {
-  background: #e4eee8;
-  color: var(--ink);
-}
+.tab-btn:hover { background: #e0e8e4; }
 
 .tab-btn.active {
   background: var(--forest);
   color: white;
-  border-color: var(--forest);
-  box-shadow: 0 4px 12px rgba(21, 93, 80, 0.25);
+  box-shadow: 0 3px 8px rgba(21, 93, 80, 0.2);
 }
 
-/* CONTROL DE VISIBILIDAD DE SECCIONES */
+/* OCULTAR Y MOSTRAR SECCIONES */
 .tab-section {
   display: none !important;
 }
 
 .tab-section.active {
   display: block !important;
-  animation: slideUp 0.35s ease-out;
+  animation: fadeIn 0.4s ease-in-out;
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ================================================= structure
-   TARJETAS Y FORMULARIOS BASE
-   ======================================================== */
+/* FORMULARIOS Y TARJETAS */
 .card {
-  background: #ffffff;
+  background: white;
   padding: 1.5rem;
-  border-radius: 20px;
+  border-radius: 18px;
   border: 1px solid var(--line);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.03);
-  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  margin-bottom: 1rem;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.8rem;
 }
 
 label {
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 650;
   color: var(--ink);
 }
 
 input, select, textarea {
-  background: #f8faf8;
-  border: 1.5px solid #d1e0d7;
-  border-radius: 12px;
+  background: #fbfcfa;
+  border: 1px solid #d5e1da;
+  border-radius: 10px;
   color: var(--ink);
-  padding: 12px 14px;
-  font-size: 0.95rem;
+  padding: 12px;
+  font-size: 16px;
   width: 100%;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #28a745;
-  box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15);
-  background: #ffffff;
+  outline: 3px solid #a6ca84;
+  outline-offset: 2px;
 }
 
 button {
   background: var(--forest);
   color: white;
   border: none;
-  border-radius: 14px;
-  padding: 14px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s, background-color 0.2s;
-}
-
-button:hover {
-  background: var(--forest-dark);
-  transform: translateY(-1px);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-/* ========================================================
-   SECCIÓN DE RECICLAJE DECORADA (DASHBOARD)
-   ======================================================== */
-
-/* Banner Hero del Reciclaje */
-.recycling-hero {
-  background: linear-gradient(135deg, #ffffff 0%, #f2f9f4 100%);
-  border: 1.5px solid #cce5d7;
-  position: relative;
-  overflow: hidden;
-}
-
-.recycling-hero h2 {
-  font-size: 1.5rem;
-  color: #0d4237;
-  margin-bottom: 4px;
-}
-
-.recycling-hero p {
-  color: #527065;
-  font-size: 0.9rem;
-}
-
-/* Contenedor de Meta y Barra de Progreso */
-.goal-card {
-  background: #ffffff;
-  padding: 1.2rem;
-  border-radius: 16px;
-  border: 1px solid #d8ebd3;
-  margin: 1.2rem 0;
-  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.05);
-}
-
-.goal-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #1b5e20;
-  margin-bottom: 0.6rem;
-}
-
-.progress-bar-bg {
-  background: #e2f0e6;
-  height: 18px;
-  border-radius: 20px;
-  overflow: hidden;
-  padding: 2px;
-}
-
-.progress-bar-fill {
-  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
-  height: 100%;
-  border-radius: 20px;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
-}
-
-/* Grilla de Tarjetas por Material */
-.recycling-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 10px;
-  margin-top: 1.2rem;
-}
-
-.mat-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.mat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-}
-
-.mat-icon-wrapper {
-  width: 44px;
-  height: 44px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  flex-shrink: 0;
+  padding: 13px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-.mat-card small {
-  display: block;
-  color: #64748b;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.mat-card h4 {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #0f172a;
-  margin-top: 2px;
-}
-
-/* Colores Temáticos por Material */
-.mat-plastico { border-left: 5px solid #0284c7; }
-.mat-plastico .mat-icon-wrapper { background: #e0f2fe; }
-
-.mat-carton { border-left: 5px solid #d97706; }
-.mat-carton .mat-icon-wrapper { background: #fef3c7; }
-
-.mat-vidrio { border-left: 5px solid #059669; }
-.mat-vidrio .mat-icon-wrapper { background: #d1fae5; }
-
-.mat-metal { border-left: 5px solid #64748b; }
-.mat-metal .mat-icon-wrapper { background: #f1f5f9; }
-
-.mat-ecoladrillo { border-left: 5px solid #9333ea; }
-.mat-ecoladrillo .mat-icon-wrapper { background: #f3e8ff; }
-
-/* Layout de 2 columnas para Formulario e Historial */
-.recycling-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
-}
-
-/* Muro/Feed de Historial Reciente */
-.recycling-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 310px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.feed-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  background: #f8faf9;
-  border-left: 4px solid var(--forest);
-  border-radius: 10px;
-  font-size: 0.88rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.feed-item strong {
-  color: #1e293b;
-}
-
-.feed-weight {
-  background: #e6f4ea;
-  color: #137333;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-}
-
-.empty-feed {
-  color: #94a3b8;
-  font-size: 0.88rem;
-  text-align: center;
-  padding: 2rem 1rem;
-}
-
-/* ========================================================
-   ESTILOS DE MAPA Y OTRAS SECCIONES
-   ======================================================== */
-#map {
-  height: 350px;
-  width: 100%;
-  border-radius: 16px;
-  z-index: 0;
-}
+button:hover { background: #0b493e; }
 
 .btn-secondary {
   background: #edf5f1;
@@ -368,14 +156,92 @@ button:active {
   background: #d6e9dd;
 }
 
+/* MAPA */
+#map {
+  height: 350px;
+  width: 100%;
+  border-radius: 14px;
+  z-index: 0;
+}
+
 .center-text { text-align: center; }
 
-/* Adaptabilidad para Dispositivos Móviles */
-@media(max-width: 768px) {
-  body { padding: 16px 10px 32px; }
-  .brand-header { padding: 18px; border-radius: 16px; gap: 14px; }
-  .brand-logo { width: 75px; height: 75px; }
-  .recycling-layout { grid-template-columns: 1fr; }
-  .recycling-grid { grid-template-columns: repeat(2, 1fr); }
-  #map { height: 280px; }
+/* SECCIÓN APÓYANOS */
+.nequi-box {
+  background: #f4f6f8;
+  border: 2px dashed #da0081;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
 }
+
+.nequi-box h3 { color: #da0081; }
+
+.nequi-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.qr-placeholder {
+  background: #e0e4e8;
+  height: 150px;
+  width: 150px;
+  margin: 1rem auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+.btn-whatsapp {
+  display: inline-block;
+  background: #25D366;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  transition: transform 0.2s;
+}
+
+.btn-whatsapp:hover { transform: scale(1.05); }
+
+/* RESPONSIVE */
+@media(max-width:760px) {
+  body { padding: 18px 12px 32px; }
+  .brand-header { padding: 22px 18px; border-radius: 20px; }
+  .brand-logo { width: 94px; height: 94px; }
+  #map { height: 300px; }
+}
+
+/* Componentes de Clima: mantener junto al formulario de reportes. */
+.report-layout{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:22px;background:none;padding:0;box-shadow:none}.location-card,.details-card{background:#fff;border:1px solid var(--line);padding:24px;border-radius:22px;min-width:0;display:flex;flex-direction:column;gap:12px}.step-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px}.step{display:grid;place-items:center;background:#eaf2d9;color:#456327;border-radius:12px;width:34px;height:34px;flex-shrink:0;font-weight:800}.step-heading h3{font-size:1.15rem;margin-bottom:4px}.step-heading p,.hint{font-size:.8rem;color:var(--muted);line-height:1.5}.location-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}button,#btn-geolocalizar{background:var(--forest);border-radius:12px;padding:13px;font-size:.9rem;min-height:44px}button:hover,#btn-geolocalizar:hover{background:#0b493e}.secondary{background:#edf5f1;color:var(--forest);border:1px solid #bed6c9}.secondary:hover,.secondary[aria-pressed=true]{background:#d6e9dd;color:#164b3f}.text-button{background:#f0f5f1;color:var(--forest);min-height:40px;font-size:.8rem}.text-button:hover{background:#dcebe2;color:var(--forest)}#map{height:350px;border-radius:14px;box-shadow:none;z-index:0}#map.picking{outline:3px solid #93bc66}#map.picking .leaflet-container,#map.picking{cursor:crosshair}#geo-status{text-align:left;background:#f1f6ed;border-radius:10px;padding:10px 12px;color:#41663a;line-height:1.5;min-height:42px}.map-caption{border-top:1px solid var(--line);padding-top:12px;font-size:.76rem;color:var(--muted)}label{font-size:.88rem;font-weight:650}label span{font-size:.75rem;color:var(--muted);font-weight:400}input,select,textarea{background:#fbfcfa;border:1px solid #d5e1da;border-radius:10px;color:var(--ink);padding:12px;font-size:16px;min-width:0}textarea{resize:vertical}input:focus,select:focus,textarea:focus,button:focus-visible,#map:focus-visible{outline:3px solid #a6ca84;outline-offset:2px}.rain-box{background:#eef5fa;padding:14px;border-radius:12px}.rain-box input,.rain-box select{margin:8px 0 12px}.photo-box{border:1px dashed #a9c4b5;border-radius:14px;padding:14px;background:#fafcf8}.photo-box p{margin:5px 0 10px}.photo-box input{font-size:.8rem;background:white}#foto-preview{max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:10px}.privacy-note{font-size:.75rem;line-height:1.5;color:var(--muted)}#report-status:empty{display:none}#report-status{padding:12px;border-radius:10px;background:#edf5f1;line-height:1.5;font-size:.85rem}#report-status.error{background:#fff0e9;color:#973e25}#btn-enviar{background:var(--forest);font-size:1rem}button:disabled{opacity:.6;cursor:wait}.leaflet-popup-content p{white-space:pre-line}.leaflet-popup-content img{max-width:100%}@media(min-width:900px){.location-card{position:sticky;top:18px}}@media(max-width:760px){body{padding:18px 12px 32px}.report-layout{grid-template-columns:1fr;gap:16px}.report-hero{padding:24px;border-radius:20px}.location-card,.details-card{padding:18px;border-radius:18px}#map{height:300px}.tabs-nav{gap:6px}.tab-btn{padding:9px 12px;font-size:.8rem}.location-actions button{font-size:.8rem;padding:10px 8px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Identidad Weather Scientists */
+.brand-header{max-width:1120px;display:flex;align-items:center;gap:26px;text-align:left;padding:26px 32px;border-radius:26px;background:linear-gradient(115deg,#062d55,#0b528b 75%,#146a9a);color:white;position:relative;overflow:hidden;box-shadow:0 10px 30px #073c7015;margin:0 auto 24px}
+.brand-header:after{content:"";position:absolute;width:270px;height:270px;border:1px solid #ffffff12;border-radius:50%;right:-90px;top:-130px;box-shadow:0 0 0 45px #ffffff04,0 0 0 90px #ffffff03;pointer-events:none}
+.brand-logo{width:144px;height:144px;object-fit:contain;border-radius:50%;flex-shrink:0;box-shadow:0 6px 22px #001c4550;border:3px solid #ffffffd9;background:white}
+.brand-copy{min-width:0;position:relative;z-index:1}.brand-header .brand-kicker{font-size:.72rem;letter-spacing:3px;font-weight:750;color:#a5dcfa;margin:0 0 6px}
+.brand-header h1{font-size:clamp(2.7rem,6vw,4rem);line-height:1.08;letter-spacing:-2px;font-weight:850;display:flex;gap:10px;align-items:baseline}.brand-header h1 span{font-weight:400;color:#bce9ff}.brand-header h1 i{height:10px;width:10px;border-radius:50%;background:#ffc342;align-self:center;margin-left:4px;box-shadow:0 0 0 6px #ffc34216}
+.brand-header .brand-motto{font-size:1rem;color:#f3f8ff;margin:10px 0 0;line-height:1.5}.brand-header .brand-school{font-size:.75rem;color:#a9cee7;margin-top:8px;line-height:1.6}.brand-school span{margin:0 5px}.brand-label{margin-left:auto;align-self:flex-end;max-width:145px;font-size:.72rem;color:#b7d9ec;line-height:1.8;border-left:2px solid #ffc342;padding-left:14px;position:relative;z-index:1}
+@media(max-width:760px){.brand-header{gap:17px;padding:22px 18px;border-radius:20px}.brand-logo{width:94px;height:94px}.brand-header .brand-kicker{font-size:.59rem;letter-spacing:1.7px}.brand-header h1{font-size:2.7rem}.brand-header .brand-motto{font-size:.8rem;margin-top:6px}.brand-header .brand-school{font-size:.65rem}.brand-label{display:none}}
+@media(max-width:390px){.brand-logo{width:78px;height:78px}.brand-header{gap:12px;padding:18px 14px}.brand-header h1{font-size:2.25rem}.brand-header .brand-kicker{letter-spacing:1px}}
+
+.report-intro{display:flex;align-items:center;gap:12px;margin:4px 0 20px;padding:14px 18px;background:#e8f1f7;border:1px solid #d4e4ee;border-radius:16px}.intro-icon{font-size:1.8rem}.report-intro h2{font-size:1.1rem;color:#123e63;letter-spacing:-.3px}.report-intro p{font-size:.82rem;color:#5c7383;margin-top:4px}.photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.photo-actions button{font-size:.82rem}.update-banner[hidden]{display:none}.update-banner{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;gap:12px;align-items:center;width:calc(100% - 24px);max-width:750px;border:1px solid #bfd5e9;background:#fff;box-shadow:0 8px 40px #072e5540;border-radius:18px;padding:18px;color:#123e63}.update-banner div{flex:1}.update-banner p{font-size:.78rem;margin-top:4px;color:#617582}.update-banner button{width:auto;white-space:nowrap;background:#0b528b;font-size:.82rem}.update-banner .secondary{background:#edf4fa;color:#0b528b}@media(max-width:600px){.update-banner{flex-wrap:wrap}.update-banner div{flex-basis:100%}.update-banner button{flex:1}.report-intro{padding:12px}.report-intro h2{font-size:.98rem}.photo-actions{grid-template-columns:1fr}}
+
+/* Ajustes de ancho y controles accesibles */
+.report-layout{width:100%;margin:0}
+.location-actions button,.photo-actions button,#btn-enviar{width:100%}
+.details-card input,.details-card select,.location-card input{max-width:100%}
+.photo-box input[hidden],#foto-preview[hidden]{display:none}
+#map .leaflet-control-zoom a{padding:0}
+.report-intro{margin-bottom:18px}
+@media(max-width:760px){.location-card{position:static}.brand-copy{overflow-wrap:break-word}}
+
+/* Reciclaje comunitario */
+.recycling-hero{padding:24px}.recycling-header-text h2{font-size:1.4rem;letter-spacing:-.4px}.recycling-header-text p{color:var(--muted);line-height:1.6;margin-top:8px}.goal-container{margin:20px 0}.goal-info{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;margin-bottom:8px}.progress-bar-bg{height:12px;border-radius:20px;background:#e8efea;overflow:hidden}.progress-bar-fill{height:100%;background:linear-gradient(90deg,#238568,#a5c65f);border-radius:20px;transition:width .3s}.recycling-total{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:18px 0}.recycling-total>span{font-size:.85rem;color:var(--muted)}.recycling-total strong{font-size:2rem;color:var(--forest)}.recycling-total small{flex-basis:100%;color:var(--muted)}.recycling-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.mat-card{border:1px solid var(--line);border-radius:14px;padding:14px 10px;background:#f7faf6;display:flex;gap:8px;align-items:center;min-width:0}.mat-icon{font-size:1.5rem}.mat-card small{font-size:.75rem;color:var(--muted)}.mat-card h4{font-size:1.1rem;margin-top:4px;overflow-wrap:anywhere}.recycling-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}.recycling-layout .card{min-width:0}.recycling-layout input,.recycling-layout select{width:100%}.recycling-layout form{padding:24px}.recycling-history-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.recycling-history-heading h3{font-size:1.05rem}.recycling-history-heading button{width:auto;font-size:.72rem;padding:9px;min-height:40px}.recycling-feed{display:flex;flex-direction:column;gap:10px}.recycling-entry{display:grid;grid-template-columns:1fr auto;gap:6px;padding:14px;border:1px solid var(--line);border-radius:12px}.recycling-entry strong{font-size:.9rem}.recycling-entry span{font-weight:750;color:var(--forest)}.recycling-entry small{color:var(--muted);grid-column:1/-1}.empty-feed{padding:22px 12px;text-align:center;color:var(--muted);font-size:.9rem;line-height:1.6}.recycling-error,#reciclaje-status.error{background:#fff0e9;color:#973e25}#reciclaje-status:empty{display:none}#reciclaje-status,.recycling-error{border-radius:12px;padding:12px;font-size:.85rem;line-height:1.6}#reciclaje-status{background:#edf6eb}#btn-reciclaje{width:100%}@media(max-width:900px){.recycling-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:760px){.recycling-layout{grid-template-columns:1fr;gap:0}.recycling-hero,.recycling-layout form{padding:18px}.recycling-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.recycling-history-heading{flex-wrap:wrap}}
+
