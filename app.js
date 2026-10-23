@@ -9,6 +9,13 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap'
 }).addTo(map);
 
+// 👇 ESTA ES LA SOLUCIÓN AGREGADA 👇
+// Fuerza al mapa a recalcular su tamaño medio segundo después de cargar
+setTimeout(() => {
+  map.invalidateSize();
+}, 500);
+// 👆 ---------------------------- 👆
+
 // Mostrar el campo del pluviómetro solo si eligen 'lluvia'
 document.getElementById('tipo_evento').addEventListener('change', (e) => {
   document.getElementById('campo-lluvia').style.display = e.target.value === 'lluvia' ? 'block' : 'none';
@@ -87,8 +94,7 @@ async function cargarReportes() {
       ${r.foto_url ? `<img src="${r.foto_url}" width="160px" style="border-radius:6px; margin-top:5px;"/>` : ''}
     `;
     L.marker([r.latitud, r.longitud]).addTo(map).bindPopup(popup);
-      });
-  
+  });
 }
 
 cargarReportes();
