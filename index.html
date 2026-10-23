@@ -6,12 +6,12 @@
   <title>WS app | Weather Scientists</title>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css?v=2026.10.23.5" />
+  <link rel="stylesheet" href="styles.css?v=2026.10.23.6" />
   <!-- CDNs de Supabase y Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js?v=2026.10.23.5" defer></script>
-<script src="updates.js?v=2026.10.23.5" defer></script>
+  <script src="app.js?v=2026.10.23.6" defer></script>
+<script src="updates.js?v=2026.10.23.6" defer></script>
 </head>
 <body>
 <aside id="update-banner" class="update-banner" hidden role="status" aria-live="polite"><div><strong>✨ Hay una nueva versión de WS app</strong><p>Envía tu registro pendiente antes de actualizar.</p></div><button type="button" id="btn-actualizar">Instalar actualización</button><button type="button" id="btn-posponer" class="secondary">Más tarde</button></aside>
@@ -115,12 +115,13 @@
             <span>Meta Comunitaria: <strong>100 kg</strong></span>
             <span id="goal-percentage">0%</span>
           </div>
-          <div class="progress-bar-bg">
+          <div id="recycling-progress" class="progress-bar-bg" role="progressbar" aria-label="Avance hacia la meta de 100 kg" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
           </div>
         </div>
 
-        <!-- Tarjetas de Totales por Material -->
+        <div class="recycling-total"><span>Total recuperado</span><strong id="total-reciclado">—</strong><small>Material pesado y registrado por la comunidad</small></div>
+<!-- Tarjetas de Totales por Material -->
         <div class="recycling-grid">
           <div class="mat-card mat-plastico">
             <span class="mat-icon">🥤</span>
@@ -183,14 +184,14 @@
           </select>
 
           <label for="cantidad_reciclaje">Cantidad (kg):</label>
-          <input type="number" id="cantidad_reciclaje" step="0.1" placeholder="Ej: 2.5" min="0.1" required>
+          <input type="number" id="cantidad_reciclaje" step="0.01" placeholder="Ej.: 2.5" min="0.01" required>
 
-          <button type="submit" id="btn-reciclaje">✨ Registrar Reciclaje</button>
+          <p class="hint">Pesa el material y escribe su peso en kilogramos. Ej.: 500 gramos = 0,5 kg. Registra cada entrega una sola vez; los ecoladrillos también se pesan.</p><div id="reciclaje-status" role="status" aria-live="polite"></div><button type="submit" id="btn-reciclaje">♻️ Registrar material</button>
         </form>
 
         <!-- Historial en Vivo -->
         <div class="card">
-          <h3>📋 Registro Reciente</h3>
+          <div class="recycling-history-heading"><h3>📋 Últimos registros</h3><button type="button" id="btn-recargar-reciclaje" class="secondary">Actualizar registros</button></div>
           <p style="font-size: 0.85rem; color: #666; margin-bottom: 0.8rem;">Últimas aportaciones de los vecinos:</p>
           <div id="historial-reciclaje" class="recycling-feed">
             <p class="empty-feed">Cargando registros...</p>
