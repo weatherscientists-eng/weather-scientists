@@ -13,10 +13,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Estilos y Scripts Locales -->
-  <link rel="stylesheet" href="styles.css?v=2026.10.23.7" />
-  <script src="app.js?v=2026.10.23.7" defer></script>
-  <script src="updates.js?v=2026.10.23.7" defer></script>
-  <script src="/pwa.js?v=2026.10.23.7" defer></script>
+  <link rel="stylesheet" href="styles.css?v=2026.10.23.8" />
+  <script src="app.js?v=2026.10.23.8" defer></script>
+  <script src="updates.js?v=2026.10.23.8" defer></script>
+  <script src="/pwa.js?v=2026.10.23.8" defer></script>
 
   <!-- Configuración PWA -->
   <link rel="manifest" href="/manifest.webmanifest">
@@ -41,7 +41,8 @@
 
   <!-- Header de Marca -->
   <header class="brand-header">
-    <img class="brand-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4..." alt="Weather Scientists Logo">
+    <!-- Reemplaza "logo.png" por el nombre exacto de tu archivo de logo -->
+    <img class="brand-logo" src="logo.png" alt="Weather Scientists Logo" onerror="this.src='https://via.placeholder.com/140?text=WS+Logo'">
     <div class="brand-copy">
       <p class="brand-kicker">WEATHER SCIENTISTS</p>
       <h1>WS <span>app</span><i></i></h1>
@@ -70,7 +71,6 @@
       </div>
 
       <div class="report-layout">
-        <!-- Mapa y Ubicación -->
         <div class="location-card">
           <div class="step-heading">
             <span class="step">1</span>
@@ -90,7 +90,6 @@
           <p class="map-caption">Haz clic en el mapa para ajustar la coordenada si es necesario.</p>
         </div>
 
-        <!-- Formulario de Detalles -->
         <div class="details-card">
           <div class="step-heading">
             <span class="step">2</span>
