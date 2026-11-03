@@ -213,14 +213,25 @@
       </div>
     </section>
 
-    <!-- 4. SECCIÓN NUESTRO GRUPO -->
-    <section id="seccion-grupo" class="tab-section">
-      <div class="card">
-        <h2>📖 Bitácora Virtual</h2>
-        <p>Aquí se verá el muro con las actividades, talleres y productos realizados por el grupo.</p>
-      </div>
-    </section>
-
+<section id="seccion-grupo" class="tab-section">
+<div class="card ws-presentacion"><h2>🌦️ Weather Scientists</h2><p><strong>Grupo de investigación escolar del C.E.R. Claudina Múnera · Caldas, Antioquia.</strong></p><h3>¿Cómo nació nuestro grupo?</h3><p>Weather Scientists surge del interés de estudiantes y docentes por observar las lluvias de nuestro territorio, construir instrumentos de medición y comprender los problemas que afectan a nuestra comunidad. Su historia podrá ampliarse con los testimonios de los integrantes.</p><h3>¿Qué queremos investigar?</h3><p>Los factores asociados con la alta pluviosidad en Caldas y sus efectos en la asistencia escolar, las huertas y la vida cotidiana. Investigamos mediante observación, mediciones, registros y trabajo colaborativo.</p></div>
+<div class="card"><h2>📖 Reuniones y bitácoras</h2><p>Conservamos nuestra memoria investigativa. Todos los integrantes autorizados pueden crear, editar y publicar.</p><p id="ws-estado" role="status" aria-live="polite"></p>
+<div id="ws-acceso"><form id="ws-login"><h3>Acceso de integrantes</h3><label for="ws-email">Correo</label><input id="ws-email" type="email" required autocomplete="username"><label for="ws-clave">Contraseña</label><input id="ws-clave" type="password" required autocomplete="current-password"><button type="submit">Ingresar</button></form></div>
+<div id="ws-trabajo" hidden><button type="button" id="ws-salir" class="secondary">Cerrar sesión</button><div class="ws-barra"><button type="button" id="ws-nueva">➕ Crear bitácora</button><span>Reuniones registradas: <strong id="ws-total">0</strong></span></div>
+<form id="ws-form" class="ws-form" hidden><h3 id="ws-form-titulo">Nueva bitácora</h3>
+<label for="ws-fecha">Fecha de reunión *</label><input id="ws-fecha" type="date" required>
+<label for="ws-titulo">Tema o título *</label><input id="ws-titulo" maxlength="180" required>
+<label for="ws-lugar">Lugar</label><input id="ws-lugar" maxlength="180">
+<label for="ws-objetivo">Objetivo</label><textarea id="ws-objetivo"></textarea>
+<label for="ws-participantes">Participantes</label><textarea id="ws-participantes" placeholder="Nombres de los asistentes"></textarea>
+<label for="ws-actividades">Actividades realizadas</label><textarea id="ws-actividades"></textarea>
+<label for="ws-resultados">Resultados y aprendizajes</label><textarea id="ws-resultados"></textarea>
+<label for="ws-dificultades">Dificultades</label><textarea id="ws-dificultades"></textarea>
+<label for="ws-compromisos">Compromisos y responsables</label><textarea id="ws-compromisos"></textarea>
+<label for="ws-proxima_reunion">Próxima reunión (opcional)</label><input id="ws-proxima_reunion" type="date">
+<label for="ws-adjuntos">Subir bitácora existente o evidencias (PDF, Word o imágenes; 10 MB por archivo)</label><input id="ws-adjuntos" type="file" multiple accept=".pdf,.doc,.docx,image/jpeg,image/png,image/webp">
+<div id="ws-archivos" class="ws-archivos"></div><div class="ws-barra"><button id="ws-guardar" type="submit">Guardar y publicar</button><button id="ws-exportar" type="button" class="secondary">Imprimir / PDF</button><button id="ws-cancelar" type="button" class="secondary">Cerrar</button><button id="ws-eliminar" type="button" class="secondary" hidden>Eliminar reunión</button></div></form>
+<h3>Historial de reuniones</h3><label for="ws-buscar">Buscar por tema o fecha</label><input id="ws-buscar" placeholder="Buscar reuniones"><div id="ws-historial"></div></div></div></section>
     <!-- 5. SECCIÓN APÓYANOS -->
     <section id="seccion-apoyanos" class="tab-section">
       <div class="card center-text">
@@ -246,6 +257,7 @@
     </section>
 
   </main>
+<script src="grupo.js?v=2026.11.03.1" defer></script>
 </body>
 </html>
 
