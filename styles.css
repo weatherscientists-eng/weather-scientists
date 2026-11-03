@@ -567,3 +567,6 @@ button:disabled { opacity: 0.6; cursor: wait; }
     transition: none !important;
   }
 }
+
+/* Grupo y bitácoras */
+.ws-presentacion{border-left:5px solid #208e84}.ws-barra{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:18px 0}.ws-form{background:#f5faf9;border:1px solid #cbdedb;padding:18px;border-radius:14px;margin:16px 0}.ws-form label{display:block;margin-top:12px}.ws-form input,.ws-form textarea{width:100%;box-sizing:border-box}.ws-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #dbe7e4;padding:14px 0}.ws-item p{margin:4px 0;color:#54645e}.ws-archivos{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}@media(max-width:600px){.ws-item{align-items:flex-start;flex-direction:column}}@media print{body *{visibility:hidden!important}#ws-form,#ws-form *{visibility:visible!important}#ws-form{position:absolute;top:0;left:0;width:100%;background:white;border:0}#ws-form button,#ws-adjuntos{display:none!important}}
