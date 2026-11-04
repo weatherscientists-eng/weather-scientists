@@ -15,7 +15,8 @@ module.exports=async(req,res)=>{
  const {data,error}=await sb.from('ws_reuniones').select('id,fecha,titulo,lugar,objetivo,participantes,actividades,resultados,dificultades,compromisos,proxima_reunion').order('fecha',{ascending:false});if(error)throw error;
  return res.json({data});
  }
- if(!equal(req.headers['x-wsd-key'],key))return res.status(403).json({error:'Clave de grupo incorrecta'});
+ if(String(req.headers['x-wsd-email']||'').trim().toLowerCase()!=='weatherscientists@claudinamunera.edu.co'||!equal(req.headers['x-wsd-key'],key))return res.status(403).json({error:'Correo o contraseña incorrectos'});
+ if(action==='login')return res.json({ok:true});
  if(action==='save'){
  const allowed=['fecha','titulo','lugar','objetivo','participantes','actividades','resultados','dificultades','compromisos','proxima_reunion'];
  const row=Object.fromEntries(allowed.map(k=>[k,body.values?.[k]||null]));
