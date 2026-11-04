@@ -20,7 +20,7 @@ module.exports=async(req,res)=>{
  const adminActions=['administrar','decidir','anular','configurar','premio','entregar'];
  if(adminActions.includes(action)){
  let status=200;let message;
- await login({...req,method:'POST',body:{action:'login'}},{setHeader(){},status(n){status=n;return this},json(d){message=d;return this}});
+ await login({headers:req.headers||{},method:'POST',body:{action:'login'}},{setHeader(){},status(n){status=n;return this},json(d){message=d;return this}});
  if(status!==200)return res.status(status).json({error:message?.error||'Ingresa a Administrar.'});
  }
  const {data:b,error:be}=await sb.storage.getBucket(BUCKET);
