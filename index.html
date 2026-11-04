@@ -36,6 +36,7 @@
     <button class="tab-btn" data-target="seccion-reciclaje">♻️ Reciclaje</button>
     <button class="tab-btn" data-target="seccion-grupo">📖 Grupo</button>
     <button class="tab-btn" data-target="seccion-apoyanos">💚 Apóyanos</button>
+<button class="tab-btn" data-target="seccion-claudipoints">✨ ClaudiPoints</button>
 <button class="tab-btn" data-target="seccion-admin">⚙️ Administrar</button>
   </nav>
   <div class="install-panel" id="install-panel">
@@ -252,10 +253,12 @@
 <label for="ws-proxima_reunion">Próxima reunión (opcional)</label><input id="ws-proxima_reunion" type="date">
 <label for="ws-adjuntos">Subir bitácora existente o evidencias (PDF, Word o imágenes; 10 MB por archivo)</label><input id="ws-adjuntos" type="file" multiple accept=".pdf,.doc,.docx,image/jpeg,image/png,image/webp">
 <div id="ws-archivos" class="ws-archivos"></div><div class="ws-barra"><button id="ws-guardar" type="submit">Guardar y publicar</button><button id="ws-exportar" type="button" class="secondary">Imprimir / PDF</button><button id="ws-cancelar" type="button" class="secondary">Cerrar</button><button id="ws-eliminar" type="button" class="secondary" hidden>Eliminar reunión</button></div></form></div><form data-admin-panel="grupo" hidden id="ws-settings-grupo"><h3>Información del grupo</h3><label>Nombre<input name="nombre" required maxlength="180"></label><label>¿Cómo nació el grupo?<textarea name="historia" required maxlength="5000"></textarea></label><label>¿Qué queremos investigar?<textarea name="objetivos" required maxlength="5000"></textarea></label><button>Guardar información</button></form><form data-admin-panel="apoyo" hidden id="ws-settings-apoyo"><h3>Apóyanos</h3><label>Descripción del abono<textarea name="abono" required maxlength="5000"></textarea></label><label>Mensaje para donaciones<textarea name="donaciones" required maxlength="5000"></textarea></label><label>Teléfono de WhatsApp y Nequi<input name="telefono" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required></label><button>Guardar información</button></form><form data-admin-panel="password" hidden id="ws-settings-password"><h3>Cambiar contraseña</h3><p>Este cambio actualiza el acceso compartido del equipo a WS App.</p><label>Contraseña actual<input name="actual" type="password" autocomplete="current-password" required></label><label>Nueva contraseña<input name="nueva" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><label>Repite la nueva contraseña<input name="confirmacion" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button>Guardar nueva contraseña</button></form></div></div></section>
+<section id="seccion-claudipoints" class="tab-section" aria-label="ClaudiPoints"></section>
   </main>
-<script src="grupo.js?v=2026.11.04.4" defer></script>
+<script src="grupo.js?v=2026.11.04.5" defer></script>
 <script src="pluviosidad.js?v=2026.11.04.2" defer></script>
 <script src="huellas-verdes.js?v=2026.11.04.1" defer></script>
+<script src="claudipoints.js?v=2026.11.04.1" defer></script>
 </body>
 </html>
 

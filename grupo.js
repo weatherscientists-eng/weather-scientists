@@ -19,7 +19,7 @@ function dibujar(){
 }
 const acceso=document.createElement('section');
 acceso.className='ws-login-card';acceso.id='ws-ingreso';
-acceso.innerHTML=`<div class="ws-login-intro"><span class="ws-login-badge">ESPACIO DEL EQUIPO</span><h3>La memoria de nuestras ideas 🌱</h3><p>Registra reuniones, comparte aprendizajes y guarda las bitácoras de Weather Scientists.</p><small>El historial de reuniones está abierto para todos.</small></div><form id="ws-login-form"><h3>Ingresa a las bitácoras</h3><label for="ws-login-email">Correo del grupo</label><input id="ws-login-email" name="correo" type="email" autocomplete="username" required placeholder="weatherscientists@claudinamunera.edu.co"><label for="ws-login-password">Contraseña</label><div class="ws-login-password"><input id="ws-login-password" name="clave" type="password" autocomplete="current-password" required placeholder="Escribe la contraseña del grupo"><button type="button" id="ws-login-toggle" aria-label="Mostrar contraseña" aria-pressed="false">Mostrar</button></div><p id="ws-login-error" role="alert"></p><button type="submit" class="ws-login-submit">Ingresar al equipo →</button></form><div id="ws-login-ok" hidden><h3>¡Ya puedes crear y editar!</h3><p>Acceso del equipo activo en esta página.</p><button type="button" id="ws-login-new">Crear una bitácora</button><button type="button" id="ws-login-out" class="secondary">Cerrar sesión</button></div>`;
+acceso.innerHTML=`<div class="ws-login-intro"><span class="ws-login-badge">ESPACIO DEL EQUIPO</span><h3>La memoria de nuestras ideas 🌱</h3><p>Gestiona bitácoras, información del equipo, premios y ClaudiPoints.</p><small>El historial de reuniones está abierto para todos.</small></div><form id="ws-login-form"><h3>Administrar WS App</h3><label for="ws-login-email">Correo del grupo</label><input id="ws-login-email" name="correo" type="email" autocomplete="username" required placeholder="weatherscientists@claudinamunera.edu.co"><label for="ws-login-password">Contraseña</label><div class="ws-login-password"><input id="ws-login-password" name="clave" type="password" autocomplete="current-password" required placeholder="Escribe la contraseña del grupo"><button type="button" id="ws-login-toggle" aria-label="Mostrar contraseña" aria-pressed="false">Mostrar</button></div><p id="ws-login-error" role="alert"></p><button type="submit" class="ws-login-submit">Ingresar al equipo →</button></form><div id="ws-login-ok" hidden><h3>¡Ya puedes crear y editar!</h3><p>Acceso del equipo activo en esta página.</p><button type="button" id="ws-login-new">Crear una bitácora</button><button type="button" id="ws-login-out" class="secondary">Cerrar sesión</button></div>`;
 $('ws-admin-login').append(acceso);
 const estilo=document.createElement('style');
 estilo.textContent=`
@@ -37,7 +37,8 @@ estilo.textContent=`
 `;
 document.head.append(estilo);
 let accesoPendiente=null;
-function estadoAcceso(activo){$('ws-login-form').hidden=activo;$('ws-login-ok').hidden=!activo;$('ws-admin-panel').hidden=!activo}
+window.wsPointsAdminRequest=async payload=>{if(!clave||!correo)throw Error('Inicia sesión en Administrar.');const r=await fetch('/api/claudipoints',{method:'POST',headers:{'Content-Type':'application/json','x-wsd-key':clave,'x-wsd-email':correo},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw Error(d.error||'No se pudo completar la operación.');return d};
+function estadoAcceso(activo){document.dispatchEvent(new CustomEvent('ws-admin-access',{detail:{activo}}));$('ws-login-form').hidden=activo;$('ws-login-ok').hidden=!activo;$('ws-admin-panel').hidden=!activo}
 async function solicitarClave(){
  if(clave&&correo)return true;
  document.querySelector('[data-target=seccion-admin]').click();
