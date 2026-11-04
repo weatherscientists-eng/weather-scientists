@@ -6,7 +6,7 @@
   <title>WS app | Weather Scientists</title>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css?v=2026.10.23.7" />
+  <link rel="stylesheet" href="styles.css?v=2026.11.04.2" />
   <!-- CDNs de Supabase y Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -214,7 +214,8 @@
     </section>
 
 <section id="seccion-grupo" class="tab-section">
-<div class="card ws-presentacion"><h2>🌦️ Weather Scientists</h2><p><strong>Grupo de investigación escolar del C.E.R. Claudina Múnera · Caldas, Antioquia.</strong></p><h3>¿Cómo nació nuestro grupo?</h3><p>Weather Scientists surge del interés de estudiantes y docentes por observar las lluvias de nuestro territorio, construir instrumentos de medición y comprender los problemas que afectan a nuestra comunidad. Su historia podrá ampliarse con los testimonios de los integrantes.</p><h3>¿Qué queremos investigar?</h3><p>Los factores asociados con la alta pluviosidad en Caldas y sus efectos en la asistencia escolar, las huertas y la vida cotidiana. Investigamos mediante observación, mediciones, registros y trabajo colaborativo.</p></div>
+<div class="ws-grupo-hero"><div class="ws-grupo-eyebrow">🌦️ INVESTIGACIÓN ESCOLAR · CALDAS, ANTIOQUIA</div><h2>Weather Scientists</h2><p>Observamos el territorio, investigamos la lluvia y construimos soluciones para nuestra comunidad.</p><div class="ws-grupo-acciones"><button type="button" onclick="document.getElementById('ws-nueva').click()">✍️ Nueva bitácora</button><button type="button" class="secondary" onclick="document.getElementById('ws-historial').scrollIntoView({behavior:'smooth'})">📚 Ver reuniones</button></div></div><div class="card ws-presentacion"><h2>🔬 Conoce nuestro grupo</h2><p><strong>Grupo de investigación escolar del C.E.R. Claudina Múnera · Caldas, Antioquia.</strong></p><h3>¿Cómo nació nuestro grupo?</h3><p>Weather Scientists surge del interés de estudiantes y docentes por observar las lluvias de nuestro territorio, construir instrumentos de medición y comprender los problemas que afectan a nuestra comunidad. Su historia podrá ampliarse con los testimonios de los integrantes.</p><h3>¿Qué queremos investigar?</h3><p>Los factores asociados con la alta pluviosidad en Caldas y sus efectos en la asistencia escolar, las huertas y la vida cotidiana. Investigamos mediante observación, mediciones, registros y trabajo colaborativo.</p></div>
+<div class="ws-grupo-pilares"><div>🌧️ <strong>Clima y lluvias</strong><span>Observación y medición de la precipitación.</span></div><div>🌱 <strong>Territorio</strong><span>Impacto en huertas, caminos y asistencia escolar.</span></div><div>🤝 <strong>Trabajo en equipo</strong><span>Reuniones, experimentos y aprendizajes compartidos.</span></div></div>
 <div class="card"><h2>📖 Reuniones y bitácoras</h2><p>Conservamos nuestra memoria investigativa. Cualquiera puede consultar; para crear y editar se requiere la clave compartida.</p><p id="ws-estado" role="status" aria-live="polite"></p>
 <div id="ws-trabajo" hidden><div class="ws-barra"><button type="button" id="ws-nueva">➕ Crear bitácora</button><span>Reuniones registradas: <strong id="ws-total">0</strong></span></div>
 <form id="ws-form" class="ws-form" hidden><h3 id="ws-form-titulo">Nueva bitácora</h3>
