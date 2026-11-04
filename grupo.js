@@ -43,7 +43,7 @@ async function abrir(id){
  if(!await solicitarClave())return;const x=listado.find(v=>v.id===id);if(!x)return;
  actual=id;campos.forEach(k=>{$('ws-'+k).value=x[k]||''});$('ws-form').hidden=false;$('ws-eliminar').hidden=false;$('ws-form-titulo').textContent='Editar bitácora';await archivos();$('ws-form').scrollIntoView({behavior:'smooth'});
 }
-$('ws-nueva').addEventListener('click',async()=>{if(!await solicitarClave())return;limpiar()});
+$('ws-nueva').addEventListener('click',async()=>{if(!await solicitarClave())return;limpiar();msg('Acceso correcto. Completa la nueva bitácora.');$('ws-form').scrollIntoView({behavior:'smooth'});$('ws-titulo').focus({preventScroll:true})});
 $('ws-cancelar').addEventListener('click',()=>{$('ws-form').hidden=true;clave=''});
 $('ws-buscar').addEventListener('input',dibujar);
 $('ws-historial').addEventListener('click',e=>{const b=e.target.closest('.ws-abrir');if(b)abrir(b.dataset.id)});
@@ -64,6 +64,7 @@ $('ws-form').addEventListener('submit',async e=>{
 });
 $('ws-eliminar').addEventListener('click',async()=>{if(!actual||!confirm('¿Eliminar esta reunión y sus archivos?'))return;try{await api('delete',{id:actual});limpiar();$('ws-form').hidden=true;clave='';await cargar()}catch(e){msg(e.message)}});
 $('ws-exportar').addEventListener('click',()=>window.print());
-$('ws-acceso').hidden=true;$('ws-trabajo').hidden=false;
+if($('ws-acceso'))$('ws-acceso').hidden=true;
+$('ws-trabajo').hidden=false;
 cargar();
 })();
