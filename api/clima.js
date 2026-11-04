@@ -1,3 +1,4 @@
+const puntos=require('../lib/puntosAutomaticos');
 // Lecturas diarias del pluviómetro institucional. No solicita geolocalización.
 const {createClient}=require('@supabase/supabase-js');
 const BUCKET='ws-pluviosidad';
@@ -17,7 +18,8 @@ module.exports=async(req,res)=>{
    if(typeof hora!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(hora))return res.status(400).json({error:'Indica una hora válida para la lectura.'});
    if(fecha+'T'+hora>fechaColombia()+'T'+horaColombia())return res.status(400).json({error:'La fecha y hora de lectura no pueden ser futuras.'});
    if(typeof mm!=='number'||!Number.isFinite(mm)||mm<0||mm>10000||Math.abs(mm*100-Math.round(mm*100))>0.000001)return res.status(400).json({error:'Escribe una lectura entre 0 y 10000 mm, con hasta dos decimales.'});
-   values={fecha,hora,mm,lugar:'C.E.R. Claudina Múnera',registrado_en:new Date().toISOString()};
+   const autores=await puntos.preparar(sb,req.body);
+   values={autores,fecha,hora,mm,lugar:'C.E.R. Claudina Múnera',registrado_en:new Date().toISOString()};
   }
   const {data:bucket,error:be}=await sb.storage.getBucket(BUCKET);
   if(be){
@@ -29,11 +31,12 @@ module.exports=async(req,res)=>{
   if(req.method==='POST'){
    const {error}=await storage.upload(values.fecha+'T'+values.hora.replace(':','')+'.json',Buffer.from(JSON.stringify(values)),{contentType:'application/json',upsert:false});
    if(error){if(String(error.statusCode)==='409'||/already exists|duplicate/i.test(error.message||''))return res.status(409).json({error:'Ya hay una lectura para esta fecha y hora. Revisa el historial o indica la hora de la nueva lectura.'});throw error}
-   return res.status(201).json({data:values});
+   const claudipoints=await puntos.acreditar(sb,{tipo:'lluvia',fuente:values.fecha+'T'+values.hora,fecha:values.fecha,hora:values.hora,detalle:`Lectura del pluviómetro: ${values.mm} mm · C.E.R. Claudina Múnera`,identidad:values.autores});
+   const {autores,...lectura}=values;return res.status(201).json({data:lectura,claudipoints});
   }
   const {data:files,error}=await storage.list('',{limit:30,sortBy:{column:'name',order:'desc'}});if(error)throw error;
   const data=await Promise.all((files||[]).filter(f=>/^\d{4}-\d{2}-\d{2}(T\d{4})?\.json$/.test(f.name)).map(async f=>{const {data,error}=await storage.download(f.name);if(error)throw error;const r=JSON.parse(await data.text());return {fecha:r.fecha,hora:r.hora||null,mm:r.mm,lugar:r.lugar}}));
   return res.json({data});
- }catch(e){console.error('Registro de pluviosidad:',e.message);return res.status(500).json({error:'No fue posible consultar o guardar la lectura. Comprueba la conexión e inténtalo de nuevo.'})}
+ }catch(e){console.error('Registro de pluviosidad:',e.message);return res.status(e.statusCode?500:400).json({error:e.statusCode?'No fue posible consultar o guardar la lectura. Comprueba la conexión e inténtalo de nuevo.':e.message||'No se pudo guardar la lectura.'})}
 };
 module.exports.fechaValida=fechaValida;

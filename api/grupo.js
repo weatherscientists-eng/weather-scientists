@@ -1,3 +1,4 @@
+const puntos=require('../lib/puntosAutomaticos');
 // Vercel Serverless Function. Configure SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and WSD_GROUP_KEY.
 const crypto=require('node:crypto');
 const {createClient}=require('@supabase/supabase-js');
@@ -45,10 +46,11 @@ module.exports=async(req,res)=>{
  }
  if(action==='save'){
  const allowed=['fecha','titulo','lugar','objetivo','participantes','actividades','resultados','dificultades','compromisos','proxima_reunion'];
+ const autores=await puntos.preparar(sb,body);
  const row=Object.fromEntries(allowed.map(k=>[k,body.values?.[k]||null]));
  if(!row.fecha||!row.titulo)return res.status(400).json({error:'Fecha y título obligatorios'});
  const q=body.id?sb.from('ws_reuniones').update(row).eq('id',body.id):sb.from('ws_reuniones').insert(row);
- const {data,error}=await q.select('id').single();if(error)throw error;return res.json({id:data.id});
+ const {data,error}=await q.select('id').single();if(error)throw error;const claudipoints=await puntos.acreditar(sb,{tipo:'bitacora',fuente:data.id,fecha:row.fecha,detalle:'Bitácora: '+row.titulo,identidad:autores});return res.json({id:data.id,claudipoints});
  }
  if(action==='files'){
  const {data,error}=await sb.from('ws_archivos').select('id,ruta,nombre').eq('reunion_id',body.id);if(error)throw error;

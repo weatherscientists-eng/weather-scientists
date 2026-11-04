@@ -80,7 +80,7 @@ $('ws-form').addEventListener('submit',async e=>{
  e.preventDefault();const btn=$('ws-guardar');btn.disabled=true;
  try{
  const values=Object.fromEntries(campos.map(k=>[k,$('ws-'+k).value.trim()||null]));
- const saved=await api('save',{id:actual,values});actual=saved.id;
+ const saved=await api('save',{id:actual,values,...window.wsIdentidad('ws-bitacora')});actual=saved.id;
  for(const f of $('ws-adjuntos').files){
  if(f.size>10485760)throw Error(f.name+': máximo 10 MB');
  const signed=await api('upload',{id:actual,name:f.name});
@@ -88,7 +88,7 @@ $('ws-form').addEventListener('submit',async e=>{
  if(!response.ok)throw Error('No se pudo subir '+f.name);
  await api('attach',{id:actual,path:signed.path,name:f.name});
  }
- $('ws-adjuntos').value='';await cargar();await archivos();$('ws-eliminar').hidden=false;msg('Bitácora guardada.');
+ $('ws-adjuntos').value='';await cargar();await archivos();$('ws-eliminar').hidden=false;msg('Bitácora guardada.'+window.wsMensajePuntos(saved.claudipoints));
  }catch(e){msg('Error: '+e.message)}finally{btn.disabled=false}
 });
 $('ws-eliminar').addEventListener('click',async()=>{if(!actual||!confirm('¿Eliminar esta reunión y sus archivos?'))return;try{await api('delete',{id:actual});limpiar();$('ws-form').hidden=true;clave='';await cargar()}catch(e){msg(e.message)}});
@@ -124,6 +124,7 @@ $('ws-settings-password').addEventListener('submit',async e=>{
  btn.disabled=true;const anterior=clave;clave=f.elements.actual.value;
  try{await api('password',{password:f.elements.nueva.value});clave=f.elements.nueva.value;f.reset();msg('Contraseña actualizada. Comparte la nueva contraseña con los integrantes del equipo.')}catch(err){clave=anterior;msg('No se pudo cambiar la contraseña: '+err.message)}finally{btn.disabled=false}
 });
+window.wsAñadirIdentidad($('ws-form'),'ws-bitacora',true);
 mostrarAdmin('bitacoras');
 api('settings').then(aplicarSettings).catch(err=>msg('No se pudo cargar la información: '+err.message));
 

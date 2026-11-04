@@ -1,3 +1,5 @@
+const puntos=require('../lib/puntosAutomaticos');
+const identidad=require('../lib/identidadEstudiante');
 const crypto=require('node:crypto');
 const {createClient}=require('@supabase/supabase-js');
 const BUCKET='ws-huellas-verdes';
@@ -14,7 +16,7 @@ module.exports=async(req,res)=>{
  async function catalogo(tipo){let offset=0,all=[];while(true){const {data,error}=await storage.list(tipo,{limit:100,offset,sortBy:{column:'name',order:'asc'}});if(error)throw error;all.push(...data);if(data.length<100)break;offset+=100;}return Promise.all(all.filter(f=>f.name.endsWith('.json')).map(async f=>{const {data,error}=await storage.download(tipo+'/'+f.name);if(error)throw error;return JSON.parse(await data.text())}))}
  const body=req.body||{};
  if(req.method==='POST'&&body.action==='registrar'){
- const {tipo}=body;if(!['estudiantes','lugares','origenes'].includes(tipo))return res.status(400).json({error:'Lista no válida.'});
+ const {tipo}=body;if(tipo==='estudiantes'){const data=await identidad.registrar(sb,body);return res.status(201).json({data})}if(!['estudiantes','lugares','origenes'].includes(tipo))return res.status(400).json({error:'Lista no válida.'});
  const nombre=String(body.nombre||'').trim().replace(/\s+/g,' '),grado=String(body.grado||'').trim();
  if(nombre.length<2||nombre.length>120||grado.length>30)return res.status(400).json({error:'Escribe un nombre de 2 a 120 caracteres.'});
  const normal=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -41,13 +43,15 @@ module.exports=async(req,res)=>{
  if(!['llenado','maduracion','cosecha'].includes(estado))return res.status(400).json({error:'Estado no válido.'});
  const lugar=lugares.find(v=>v.id===body.lugar),origen=origenes.find(v=>v.id===body.origen),ids=[...new Set(Array.isArray(body.estudiantes)?body.estudiantes:[])],equipo=ids.map(id=>estudiantes.find(v=>v.id===id));
  if(!lugar||!origen||!equipo.length||equipo.some(v=>!v))return res.status(400).json({error:'Selecciona el lugar, la procedencia y al menos un estudiante registrado.'});
+ const autores=await puntos.preparar(sb,{estudiantes:ids,roster:estudiantes,registrador:body.registrador});
  const observaciones=String(body.observaciones||'').trim();if(observaciones.length>3000)return res.status(400).json({error:'Usa hasta 3000 caracteres en las observaciones.'});
  let fotoUrl=null;
  if(body.foto){if(!/^fotos\/[0-9a-f-]+\.(jpg|png|webp)$/.test(body.foto))return res.status(400).json({error:'Foto no válida.'});const {data,error}=await storage.createSignedUrl(body.foto,300);if(error)throw error;/* Guardar ruta privada, sin enlaces que expiran. */fotoUrl='ws-huellas-verdes:'+body.foto;}
  const metadata={grupo:'Huellas Verdes',lugar,origen,estudiantes:equipo,observaciones};
- const {error}=await sb.from('compostaje').insert({fecha,peso_kg,estado,observaciones:'WS_COMPOST_V2\n'+JSON.stringify(metadata),foto_url:fotoUrl});if(error)throw error;
- return res.status(201).json({ok:true});
+ const {data:guardado,error}=await sb.from('compostaje').insert({fecha,peso_kg,estado,observaciones:'WS_COMPOST_V2\n'+JSON.stringify(metadata),foto_url:fotoUrl}).select('id').single();if(error)throw error;
+ const claudipoints=await puntos.acreditar(sb,{tipo:'compostaje',fuente:guardado.id,fecha,detalle:`Entrega de ${peso_kg} kg · ${origen.nombre} → ${lugar.nombre}`,identidad:autores});
+ return res.status(201).json({ok:true,claudipoints});
  }
  return res.status(400).json({error:'Acción no válida.'});
- }catch(e){console.error('Compostaje:',e.message);return res.status(500).json({error:'No fue posible completar la operación. Revisa tu conexión y vuelve a intentarlo.'})}
+ }catch(e){console.error('Compostaje:',e.message);return res.status(e.statusCode?500:400).json({error:e.statusCode?'No fue posible completar la operación. Revisa tu conexión y vuelve a intentarlo.':e.message||'No se pudo completar la operación.'})}
 };

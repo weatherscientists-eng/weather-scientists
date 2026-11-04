@@ -3,6 +3,7 @@ const SUPABASE_URL = 'https://ftornytlczyzycccpkjv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ0b3JueXRsY3p5enljY2Nwa2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2MTMxNDEsImV4cCI6MjEwNjE4OTE0MX0.-UqHHTLbSwrTvKw2ChsKR2SUN38FXpmbMf_zatbjFHk';
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+window.wsAñadirIdentidad(document.getElementById('report-form'),'ws-evento');
 // --- 1. LÓGICA DEL MAPA Y CLIMA ---
 const map = L.map('map').setView([6.0560, -75.6280], 11);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -125,18 +126,18 @@ document.getElementById('report-form').addEventListener('submit', async e => {
     let fotoUrl = null;
     const file = selectedPhoto;
     if (file) {
-      const fileName = `clima_${crypto.randomUUID()}.${file.name.split('.').pop().replace(/[^a-z0-9]/gi,'') || 'jpg'}`;
-      const {error} = await _supabase.storage.from('reportes-fotos').upload(fileName,file);
-      if (error) throw new Error('No se pudo subir la foto. Tu reporte sigue aquí para que vuelvas a intentar.');
-      fotoUrl = _supabase.storage.from('reportes-fotos').getPublicUrl(fileName).data.publicUrl;
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Escoge una imagen JPG, PNG o WebP.');
+      const signed=await window.wsComunidad('foto',{mime:file.type});
+      const upload=await fetch(signed.url,{method:'PUT',headers:{'Content-Type':file.type,'x-upsert':'false'},body:file});
+      if(!upload.ok)throw Error('No se pudo subir la foto. Los datos siguen en el formulario.');
+      fotoUrl=signed.publicUrl;
     }
     const lluvia = document.getElementById('tipo_evento').value === 'lluvia';
-    const {error} = await _supabase.from('reportes').insert([{
+    const saved=await window.wsComunidad('evento',{...window.wsIdentidad('ws-evento'),values:{fecha:fechaEvento.value,
       tipo_evento:document.getElementById('tipo_evento').value,
       medida_mm:lluvia && document.getElementById('medida_mm').value !== '' ? Number(document.getElementById('medida_mm').value) : null,
       descripcion:construirDescripcion(),foto_url:fotoUrl,latitud:Number(lat),longitud:Number(lng)
-    }]);
-    if (error) throw new Error('No se pudo guardar: ' + error.message);
+    }});
     document.getElementById('report-form').reset(); prepararFecha();
     document.getElementById('latitud').value=''; document.getElementById('longitud').value='';
     document.getElementById('campo-lluvia').style.display='none';
@@ -145,15 +146,14 @@ document.getElementById('report-form').addEventListener('submit', async e => {
     if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl=null; }
     if (locationMarker) {map.removeLayer(locationMarker);locationMarker=null;}
     document.getElementById('geo-status').textContent='Selecciona el lugar para un nuevo reporte.';
-    estadoReporte.textContent='¡Gracias! Tu observación climática ya fue compartida con la comunidad 💚';
+    estadoReporte.textContent='¡Gracias! Tu observación climática ya fue compartida con la comunidad 💚'+window.wsMensajePuntos(saved.claudipoints);
     estadoReporte.focus(); cargarReportes();
   } catch(error) { estadoReporte.className='error';estadoReporte.textContent=error.message || 'No pudimos conectar. Intenta nuevamente.';estadoReporte.focus(); }
   finally {button.disabled=false;button.textContent='Compartir mi reporte ↗';}
 });
 async function cargarReportes() {
   try {
-    const {data:reportes,error} = await _supabase.from('reportes').select('*');
-    if (error) throw error;
+    const response=await fetch('/api/comunidad?tipo=reportes',{cache:'no-store'});const result=await response.json();if(!response.ok)throw Error(result.error);const reportes=result.data;
     reportMarkers.clearLayers();
     reportes.forEach(r => {
       if (r.latitud == null || r.longitud == null || r.latitud === '' || r.longitud === '') return;
@@ -252,6 +252,11 @@ fechaReciclaje.addEventListener('focus',()=>fechaReciclaje.max=horaColombia().sl
 function mensajeReciclaje(texto,error=false) {
  reciclajeStatus.textContent=texto;reciclajeStatus.classList.toggle('error',error);
 }
+window.wsAñadirIdentidad(document.getElementById('reciclaje-form'),'ws-botellas');
+const bottleField=document.createElement('label');bottleField.htmlFor='ws-bottle-count';bottleField.innerHTML='Número de botellas aportadas por el estudiante<input id="ws-bottle-count" type="number" min="0" max="10000" step="1" value="0"><small>Indica 0 si este registro no corresponde a botellas. Cada botella suma ClaudiPoints después de aprobar la entrega.</small>';
+document.getElementById('ws-botellas-identidad').before(bottleField);
+function actualizarBotellas(){const count=document.getElementById('ws-bottle-count'),material=document.getElementById('tipo_material').value;const eligible=['plastico','vidrio'].includes(material);count.disabled=!eligible;if(!eligible)count.value='0';const active=eligible&&Number(count.value)>0;document.getElementById('ws-botellas-identidad').hidden=!active;document.getElementById('ws-botellas-documentos').required=active;}
+document.getElementById('ws-bottle-count').addEventListener('input',actualizarBotellas);document.getElementById('tipo_material').addEventListener('change',actualizarBotellas);actualizarBotellas();
 safeAddListener('reciclaje-form','submit',async e=>{
  e.preventDefault();
  const button=document.getElementById('btn-reciclaje');
@@ -264,10 +269,9 @@ safeAddListener('reciclaje-form','submit',async e=>{
  }
  button.disabled=true;button.textContent='Guardando…';mensajeReciclaje('');
  try {
-  const {error}=await _supabase.from('reciclaje').insert([{fecha,tipo_material:tipo,cantidad_kg:cantidad}]);
-  if(error) throw error;
-  document.getElementById('reciclaje-form').reset();iniciarFechaReciclaje();
-  mensajeReciclaje('¡Registro guardado! '+formatoKg(cantidad)+' de '+materialesReciclaje[tipo].nombre.toLowerCase()+'. Gracias por aportar 💚');
+  const saved=await window.wsComunidad('reciclaje',{...window.wsIdentidad('ws-botellas'),botellas:Number(document.getElementById('ws-bottle-count').value),values:{fecha,tipo_material:tipo,cantidad_kg:cantidad}});
+  document.getElementById('reciclaje-form').reset();iniciarFechaReciclaje();actualizarBotellas();
+  mensajeReciclaje('¡Registro guardado! '+formatoKg(cantidad)+' de '+materialesReciclaje[tipo].nombre.toLowerCase()+'. Gracias por aportar 💚'+window.wsMensajePuntos(saved.claudipoints));
   await cargarTotalReciclado();
  } catch(error) {
   mensajeReciclaje('No se pudo guardar. Tus datos siguen en el formulario. '+(error.message || 'Revisa la conexión e intenta de nuevo.'),true);
@@ -281,14 +285,7 @@ async function cargarTotalReciclado() {
  const retry=document.getElementById('btn-recargar-reciclaje');
  retry.disabled=true;
  try {
-  let registros=[],desde=0;
-  while(true) {
-   const {data,error}=await _supabase.from('reciclaje').select('fecha,tipo_material,cantidad_kg').order('fecha',{ascending:false}).range(desde,desde+999);
-   if(error) throw error;
-   registros.push(...data);
-   if(data.length<1000) break;
-   desde+=1000;
-  }
+  const response=await fetch('/api/comunidad?tipo=reciclaje',{cache:'no-store'});const result=await response.json();if(!response.ok)throw Error(result.error);const registros=result.data;
   const totales=Object.fromEntries(Object.keys(materialesReciclaje).map(k=>[k,0]));
   let total=0;
   registros.forEach(r=>{

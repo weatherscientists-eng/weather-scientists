@@ -30,6 +30,7 @@ module.exports=async(req,res)=>{
  async function read(path){const {data,error}=await storage.download(path);if(error){if(/not found|does not exist/i.test(error.message||''))return null;throw error}return JSON.parse(await data.text())}
  async function write(path,row){const {error}=await storage.upload(path,Buffer.from(JSON.stringify(row)),{upsert:false,contentType:'application/json'});if(error){if(String(error.statusCode)==='409'||/already exists|duplicate/i.test(error.message||''))return false;throw error}return true}
  async function students(){return list('estudiantes',sb.storage.from('ws-huellas-verdes'))}
+ let pendientesAutomaticos=0;if(action==='administrar')pendientesAutomaticos=await require('../lib/puntosAutomaticos').sincronizar(sb);
  const configs=await list('config');configs.sort((a,b)=>b.version.localeCompare(a.version));let config=configs[0]||JSON.parse(JSON.stringify(initial));
  async function saveConfig(){config.version=Date.now().toString().padStart(14,'0')+'-'+crypto.randomUUID();await write('config/'+config.version+'.json',config)}
  if(action==='solicitar'){
@@ -73,7 +74,7 @@ module.exports=async(req,res)=>{
  }
  if(!['contexto','administrar','perfil'].includes(action))return res.status(400).json({error:'Acción no válida.'});
  const roster=await students();const clasificacion=roster.map(p=>({...p,...(totals.get(p.id)||{puntos:0,acciones:0}),insignias:config.premios.filter(v=>v.activo&&v.tipo==='insignia'&&(totals.get(p.id)?.puntos||0)>=v.meta)})).sort((a,b)=>b.puntos-a.puntos||a.nombre.localeCompare(b.nombre,'es'));
- const result={actividades,config,estudiantes:roster,clasificacion};
+ const result={pendientesAutomaticos,actividades,config,estudiantes:roster,clasificacion};
  if(action==='administrar')Object.assign(result,{solicitudes:claims.map(c=>({...c,estado:state(c),decision:decisions.find(v=>v.id===c.id)||null,anulacion:revokes.find(v=>v.id===c.id)||null})).sort((a,b)=>b.creado_en.localeCompare(a.creado_en)),entregas:deliveries});
  if(action==='perfil'){if(!validId(body.estudiante))return res.status(400).json({error:'Selecciona un estudiante.'});Object.assign(result,{perfil:clasificacion.find(p=>p.id===body.estudiante)||null,historial:claims.filter(c=>c.participantes.some(p=>p.id===body.estudiante)).map(c=>({id:c.id,tipo:c.tipo,fecha:c.fecha,hora:c.hora,detalle:c.detalle,estado:state(c),puntos:state(c)==='aprobado'?decisions.find(d=>d.id===c.id).puntaje*c.participantes.find(p=>p.id===body.estudiante).cantidad:0})),entregas:deliveries.filter(v=>v.estudiante===body.estudiante)})}
  return res.json(result);
