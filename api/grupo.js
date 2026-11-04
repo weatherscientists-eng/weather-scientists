@@ -11,12 +11,38 @@ module.exports=async(req,res)=>{
  const fail=e=>res.status(400).json({error:e.message||String(e)});
  try{
  const body=req.body||{},action=req.method==='GET'?'list':body.action;
+ const configPath='_administracion/config.json';
+ async function readConfig(){
+  const {data,error}=await sb.storage.from('ws-bitacoras').download(configPath);
+  if(error){if(String(error.statusCode||error.status)==='404'||/not found|does not exist/i.test(error.message||''))return {};throw Error('No se pudo cargar la configuración: '+error.message)}
+  return JSON.parse(await data.text());
+ }
+ const config=await readConfig();
+ const publicSettings=()=>({grupo:config.grupo||{},apoyo:config.apoyo||{}});
+ if(action==='settings')return res.json(publicSettings());
  if(action==='list'){
  const {data,error}=await sb.from('ws_reuniones').select('id,fecha,titulo,lugar,objetivo,participantes,actividades,resultados,dificultades,compromisos,proxima_reunion').order('fecha',{ascending:false});if(error)throw error;
  return res.json({data});
  }
- if(String(req.headers['x-wsd-email']||'').trim().toLowerCase()!=='weatherscientists@claudinamunera.edu.co'||!equal(req.headers['x-wsd-key'],key))return res.status(403).json({error:'Correo o contraseña incorrectos'});
+ if(String(req.headers['x-wsd-email']||'').trim().toLowerCase()!=='weatherscientists@claudinamunera.edu.co'||!(config.password?crypto.timingSafeEqual(crypto.scryptSync(String(req.headers['x-wsd-key']||''),config.password.salt,64),Buffer.from(config.password.hash,'hex')):equal(req.headers['x-wsd-key'],key)))return res.status(403).json({error:'Correo o contraseña incorrectos'});
  if(action==='login')return res.json({ok:true});
+ async function writeConfig(){
+  const {error}=await sb.storage.from('ws-bitacoras').upload(configPath,Buffer.from(JSON.stringify(config)),{contentType:'application/json',upsert:true});
+  if(error)throw error;
+ }
+ if(action==='password'){
+  const password=String(body.password||'');
+  if(password.length<8||password.length>128)return res.status(400).json({error:'Usa entre 8 y 128 caracteres para la contraseña'});
+  const salt=crypto.randomBytes(24).toString('hex');config.password={salt,hash:crypto.scryptSync(password,salt,64).toString('hex')};
+  await writeConfig();return res.json({ok:true});
+ }
+ if(action==='saveSettings'){
+  const fields={grupo:['nombre','historia','objetivos'],apoyo:['abono','donaciones','telefono']};
+  const section=body.section;if(!fields[section])return res.status(400).json({error:'Sección no válida'});
+  const values={};for(const field of fields[section]){const value=String(body.values?.[field]||'').trim();if(!value||value.length>5000)return res.status(400).json({error:'Completa los campos (máximo 5000 caracteres)'});values[field]=value;}
+  if(section==='apoyo'&&!/^\d{10}$/.test(values.telefono))return res.status(400).json({error:'Escribe un teléfono colombiano de 10 dígitos'});
+  config[section]=values;await writeConfig();return res.json(publicSettings());
+ }
  if(action==='save'){
  const allowed=['fecha','titulo','lugar','objetivo','participantes','actividades','resultados','dificultades','compromisos','proxima_reunion'];
  const row=Object.fromEntries(allowed.map(k=>[k,body.values?.[k]||null]));

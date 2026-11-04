@@ -36,6 +36,7 @@
     <button class="tab-btn" data-target="seccion-reciclaje">♻️ Reciclaje</button>
     <button class="tab-btn" data-target="seccion-grupo">📖 Grupo</button>
     <button class="tab-btn" data-target="seccion-apoyanos">💚 Apóyanos</button>
+<button class="tab-btn" data-target="seccion-admin">⚙️ Administrar</button>
   </nav>
   <div class="install-panel" id="install-panel">
     <span>📲 Lleva <strong>WS app</strong> en tu pantalla de inicio</span>
@@ -214,11 +215,31 @@
     </section>
 
 <section id="seccion-grupo" class="tab-section">
-<div class="ws-grupo-hero"><div class="ws-grupo-eyebrow">🌦️ INVESTIGACIÓN ESCOLAR · CALDAS, ANTIOQUIA</div><h2>Weather Scientists</h2><p>Observamos el territorio, investigamos la lluvia y construimos soluciones para nuestra comunidad.</p><div class="ws-grupo-acciones"><button type="button" onclick="document.getElementById('ws-nueva').click()">✍️ Nueva bitácora</button><button type="button" class="secondary" onclick="document.getElementById('ws-historial').scrollIntoView({behavior:'smooth'})">📚 Ver reuniones</button></div></div><div class="card ws-presentacion"><h2>🔬 Conoce nuestro grupo</h2><p><strong>Grupo de investigación escolar del C.E.R. Claudina Múnera · Caldas, Antioquia.</strong></p><h3>¿Cómo nació nuestro grupo?</h3><p>Weather Scientists surge del interés de estudiantes y docentes por observar las lluvias de nuestro territorio, construir instrumentos de medición y comprender los problemas que afectan a nuestra comunidad. Su historia podrá ampliarse con los testimonios de los integrantes.</p><h3>¿Qué queremos investigar?</h3><p>Los factores asociados con la alta pluviosidad en Caldas y sus efectos en la asistencia escolar, las huertas y la vida cotidiana. Investigamos mediante observación, mediciones, registros y trabajo colaborativo.</p></div>
+<div class="ws-grupo-hero"><div class="ws-grupo-eyebrow">🌦️ INVESTIGACIÓN ESCOLAR · CALDAS, ANTIOQUIA</div><h2 id="ws-public-nombre">Weather Scientists</h2><p>Observamos el territorio, investigamos la lluvia y construimos soluciones para nuestra comunidad.</p><div class="ws-grupo-acciones"><button type="button" onclick="document.querySelector('[data-target=seccion-admin]').click()">✍️ Nueva bitácora</button><button type="button" class="secondary" onclick="document.getElementById('ws-historial').scrollIntoView({behavior:'smooth'})">📚 Ver reuniones</button></div></div><div class="card ws-presentacion"><h2>🔬 Conoce nuestro grupo</h2><p><strong>Grupo de investigación escolar del C.E.R. Claudina Múnera · Caldas, Antioquia.</strong></p><h3>¿Cómo nació nuestro grupo?</h3><p id="ws-public-historia">Weather Scientists surge del interés de estudiantes y docentes por observar las lluvias de nuestro territorio, construir instrumentos de medición y comprender los problemas que afectan a nuestra comunidad. Su historia podrá ampliarse con los testimonios de los integrantes.</p><h3>¿Qué queremos investigar?</h3><p id="ws-public-objetivos">Los factores asociados con la alta pluviosidad en Caldas y sus efectos en la asistencia escolar, las huertas y la vida cotidiana. Investigamos mediante observación, mediciones, registros y trabajo colaborativo.</p></div>
 <div class="ws-grupo-pilares"><div>🌧️ <strong>Clima y lluvias</strong><span>Observación y medición de la precipitación.</span></div><div>🌱 <strong>Territorio</strong><span>Impacto en huertas, caminos y asistencia escolar.</span></div><div>🤝 <strong>Trabajo en equipo</strong><span>Reuniones, experimentos y aprendizajes compartidos.</span></div></div>
-<div class="card"><h2>📖 Reuniones y bitácoras</h2><p>Conservamos nuestra memoria investigativa. Cualquiera puede consultar; para crear y editar se requiere la clave compartida.</p><p id="ws-estado" role="status" aria-live="polite"></p>
+<div class="card"><h2>📖 Reuniones y bitácoras</h2><p>Conservamos nuestra memoria investigativa. Consulta aquí nuestras reuniones. Para crear o editar bitácoras, ingresa a Administrar.</p><p id="ws-estado" role="status" aria-live="polite"></p>
 <div id="ws-trabajo" hidden><div class="ws-barra"><button type="button" id="ws-nueva">➕ Crear bitácora</button><span>Reuniones registradas: <strong id="ws-total">0</strong></span></div>
-<form id="ws-form" class="ws-form" hidden><h3 id="ws-form-titulo">Nueva bitácora</h3>
+
+<h3>Historial de reuniones</h3><label for="ws-buscar">Buscar por tema o fecha</label><input id="ws-buscar" placeholder="Buscar reuniones"><div id="ws-historial"></div></div></div></section>
+    <!-- 5. SECCIÓN APÓYANOS -->
+    <section id="seccion-apoyanos" class="tab-section">
+      <div class="card center-text">
+        <h2>💚 Apoya nuestra labor</h2>
+        <p>Con tu apoyo seguimos investigando y cuidando nuestro territorio.</p>
+        <h3>🌱 Compra nuestro Abono Orgánico</h3>
+        <p id="ws-public-abono">Excelente para tus plantas. Empaque de 2 kg.</p>
+        <a href="https://wa.me/573216379535?text=Hola%2C%20quiero%20comprar%20abono%20org%C3%A1nico%20de%20Weather%20Scientists." target="_blank" rel="noopener noreferrer" class="btn-whatsapp">💬 Pedir por WhatsApp</a>
+        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ddd;">
+        <div class="nequi-box">
+          <h3>📱 Donaciones vía Nequi</h3>
+          <p id="ws-public-donaciones">Si deseas contribuir voluntariamente a nuestro grupo de investigación:</p>
+          <p class="nequi-number">321 637 9535</p>
+          <p>Realiza tu aporte al número indicado.</p>
+        </div>
+      </div>
+    </section>
+
+<section id="seccion-admin" class="tab-section"><div class="card"><h2>⚙️ Administrar WS App</h2><p>Un espacio para cuidar la información y la memoria de nuestro equipo.</p><div id="ws-admin-login"></div><div id="ws-admin-panel" hidden><div class="ws-admin-tabs" role="group" aria-label="Herramientas de administración"><button type="button" data-admin="bitacoras">📖 Bitácoras</button><button type="button" data-admin="grupo">🌦️ Información del grupo</button><button type="button" data-admin="apoyo">💚 Apóyanos</button><button type="button" data-admin="password">🔐 Cambiar contraseña</button></div><p id="ws-admin-status" role="status" aria-live="polite"></p><div data-admin-panel="bitacoras"><h3>Bitácoras del equipo</h3><button type="button" id="ws-admin-new">Crear bitácora</button><div id="ws-admin-list"></div><form id="ws-form" class="ws-form" hidden><h3 id="ws-form-titulo">Nueva bitácora</h3>
 <label for="ws-fecha">Fecha de reunión *</label><input id="ws-fecha" type="date" required>
 <label for="ws-titulo">Tema o título *</label><input id="ws-titulo" maxlength="180" required>
 <label for="ws-lugar">Lugar</label><input id="ws-lugar" maxlength="180">
@@ -230,28 +251,9 @@
 <label for="ws-compromisos">Compromisos y responsables</label><textarea id="ws-compromisos"></textarea>
 <label for="ws-proxima_reunion">Próxima reunión (opcional)</label><input id="ws-proxima_reunion" type="date">
 <label for="ws-adjuntos">Subir bitácora existente o evidencias (PDF, Word o imágenes; 10 MB por archivo)</label><input id="ws-adjuntos" type="file" multiple accept=".pdf,.doc,.docx,image/jpeg,image/png,image/webp">
-<div id="ws-archivos" class="ws-archivos"></div><div class="ws-barra"><button id="ws-guardar" type="submit">Guardar y publicar</button><button id="ws-exportar" type="button" class="secondary">Imprimir / PDF</button><button id="ws-cancelar" type="button" class="secondary">Cerrar</button><button id="ws-eliminar" type="button" class="secondary" hidden>Eliminar reunión</button></div></form>
-<h3>Historial de reuniones</h3><label for="ws-buscar">Buscar por tema o fecha</label><input id="ws-buscar" placeholder="Buscar reuniones"><div id="ws-historial"></div></div></div></section>
-    <!-- 5. SECCIÓN APÓYANOS -->
-    <section id="seccion-apoyanos" class="tab-section">
-      <div class="card center-text">
-        <h2>💚 Apoya nuestra labor</h2>
-        <p>Con tu apoyo seguimos investigando y cuidando nuestro territorio.</p>
-        <h3>🌱 Compra nuestro Abono Orgánico</h3>
-        <p>Excelente para tus plantas. Empaque de 2 kg.</p>
-        <a href="https://wa.me/573216379535?text=Hola%2C%20quiero%20comprar%20abono%20org%C3%A1nico%20de%20Weather%20Scientists." target="_blank" rel="noopener noreferrer" class="btn-whatsapp">💬 Pedir por WhatsApp</a>
-        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ddd;">
-        <div class="nequi-box">
-          <h3>📱 Donaciones vía Nequi</h3>
-          <p>Si deseas contribuir voluntariamente a nuestro grupo de investigación:</p>
-          <p class="nequi-number">321 637 9535</p>
-          <p>Realiza tu aporte al número indicado.</p>
-        </div>
-      </div>
-    </section>
-
+<div id="ws-archivos" class="ws-archivos"></div><div class="ws-barra"><button id="ws-guardar" type="submit">Guardar y publicar</button><button id="ws-exportar" type="button" class="secondary">Imprimir / PDF</button><button id="ws-cancelar" type="button" class="secondary">Cerrar</button><button id="ws-eliminar" type="button" class="secondary" hidden>Eliminar reunión</button></div></form></div><form data-admin-panel="grupo" hidden id="ws-settings-grupo"><h3>Información del grupo</h3><label>Nombre<input name="nombre" required maxlength="180"></label><label>¿Cómo nació el grupo?<textarea name="historia" required maxlength="5000"></textarea></label><label>¿Qué queremos investigar?<textarea name="objetivos" required maxlength="5000"></textarea></label><button>Guardar información</button></form><form data-admin-panel="apoyo" hidden id="ws-settings-apoyo"><h3>Apóyanos</h3><label>Descripción del abono<textarea name="abono" required maxlength="5000"></textarea></label><label>Mensaje para donaciones<textarea name="donaciones" required maxlength="5000"></textarea></label><label>Teléfono de WhatsApp y Nequi<input name="telefono" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required></label><button>Guardar información</button></form><form data-admin-panel="password" hidden id="ws-settings-password"><h3>Cambiar contraseña</h3><p>Este cambio actualiza el acceso compartido del equipo a WS App.</p><label>Contraseña actual<input name="actual" type="password" autocomplete="current-password" required></label><label>Nueva contraseña<input name="nueva" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><label>Repite la nueva contraseña<input name="confirmacion" type="password" autocomplete="new-password" minlength="8" maxlength="128" required></label><button>Guardar nueva contraseña</button></form></div></div></section>
   </main>
-<script src="grupo.js?v=2026.11.04.2" defer></script>
+<script src="grupo.js?v=2026.11.04.4" defer></script>
 </body>
 </html>
 
