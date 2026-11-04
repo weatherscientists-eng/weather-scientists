@@ -326,25 +326,33 @@ async function cargarTotalReciclado() {
 document.getElementById('btn-recargar-reciclaje').addEventListener('click',cargarTotalReciclado);
 cargarTotalReciclado();
 
-// --- 4. LÓGICA DE NAVEGACIÓN (TABS) ---
+// --- 4. NAVEGACIÓN: recordar última sección visitada ---
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabSections = document.querySelectorAll('.tab-section');
+const LAST_TAB_KEY = 'ws-app-last-tab';
+
+function activarSeccion(targetId, recordar = true) {
+  const targetSection = document.getElementById(targetId);
+  const targetButton = [...tabButtons].find(btn => btn.dataset.target === targetId);
+  if (!targetSection || !targetButton || !targetSection.classList.contains('tab-section')) return false;
+  tabButtons.forEach(btn => btn.classList.toggle('active', btn === targetButton));
+  tabSections.forEach(sec => sec.classList.toggle('active', sec === targetSection));
+  if (recordar) {
+    try { localStorage.setItem(LAST_TAB_KEY, targetId); } catch (_) {}
+  }
+  if (targetId === 'seccion-clima' && typeof map !== 'undefined') {
+    setTimeout(() => map.invalidateSize(), 100);
+  }
+  return true;
+}
 
 tabButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    tabSections.forEach(sec => sec.classList.remove('active'));
-
-    button.classList.add('active');
-
-    const targetId = button.getAttribute('data-target');
-    const targetSection = document.getElementById(targetId);
-    if (targetSection) targetSection.classList.add('active');
-
-    if (targetId === 'seccion-clima') {
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-    }
-  });
+  button.addEventListener('click', () => activarSeccion(button.dataset.target));
 });
+
+try {
+  const ultima = localStorage.getItem(LAST_TAB_KEY);
+  if (ultima) activarSeccion(ultima, false);
+} catch (_) {
+  // La aplicación sigue funcionando si el navegador bloquea el almacenamiento.
+}
