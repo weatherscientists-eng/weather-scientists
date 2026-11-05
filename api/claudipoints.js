@@ -2,8 +2,8 @@ const crypto=require('node:crypto');
 const {createClient}=require('@supabase/supabase-js');
 const login=require('./grupo');
 const BUCKET='ws-claudipoints';
-const actividades={lluvia:'Lectura del pluviómetro',compostaje:'Entrega de residuos al compostaje',botellas:'Entrega de botellas',evento:'Reporte de evento climático',bitacora:'Elaboración de bitácora'};
-const initial={version:'inicial',tarifas:{lluvia:5,compostaje:5,botellas:1,evento:5,bitacora:10},premios:[
+const actividades={lluvia:'Lectura del pluviómetro',compostaje:'Entrega de residuos al compostaje',botellas:'Entrega de botellas',separacion:'Jornada de separación de botellas',evento:'Reporte de evento climático',bitacora:'Elaboración de bitácora'};
+const initial={version:'inicial',tarifas:{lluvia:5,compostaje:5,botellas:1,separacion:5,evento:5,bitacora:10},premios:[
 {id:'semilla-huerta',tipo:'insignia',nombre:'🌱 Semilla de la Huerta',descripcion:'Cada acción hace crecer nuestro colegio.',meta:20,activo:true},
 {id:'huellas-verdes',tipo:'insignia',nombre:'🍃 Huella Verde',descripcion:'Transformamos residuos en nuevas oportunidades.',meta:40,activo:true},
 {id:'weather-scientist',tipo:'insignia',nombre:'🌦️ Weather Scientist',descripcion:'Observamos, medimos y aprendemos del territorio.',meta:60,activo:true},
@@ -31,7 +31,7 @@ module.exports=async(req,res)=>{
  async function write(path,row){const {error}=await storage.upload(path,Buffer.from(JSON.stringify(row)),{upsert:false,contentType:'application/json'});if(error){if(String(error.statusCode)==='409'||/already exists|duplicate/i.test(error.message||''))return false;throw error}return true}
  async function students(){return list('estudiantes',sb.storage.from('ws-huellas-verdes'))}
  let pendientesAutomaticos=0;if(action==='administrar')pendientesAutomaticos=await require('../lib/puntosAutomaticos').sincronizar(sb);
- const configs=await list('config');configs.sort((a,b)=>b.version.localeCompare(a.version));let config=configs[0]||JSON.parse(JSON.stringify(initial));
+ const configs=await list('config');configs.sort((a,b)=>b.version.localeCompare(a.version));let config=configs[0]||JSON.parse(JSON.stringify(initial));config.tarifas={...initial.tarifas,...config.tarifas};
  async function saveConfig(){config.version=Date.now().toString().padStart(14,'0')+'-'+crypto.randomUUID();await write('config/'+config.version+'.json',config)}
  if(action==='solicitar'){
  const {id,tipo,fecha,hora}=body;const d=new Date(String(fecha)+'T12:00:00Z');

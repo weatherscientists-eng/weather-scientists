@@ -254,8 +254,8 @@ function mensajeReciclaje(texto,error=false) {
 }
 window.wsAñadirIdentidad(document.getElementById('reciclaje-form'),'ws-botellas');
 const bottleField=document.createElement('label');bottleField.htmlFor='ws-bottle-count';bottleField.innerHTML='Número de botellas aportadas por el estudiante<input id="ws-bottle-count" type="number" min="0" max="10000" step="1" value="0"><small>Indica 0 si este registro no corresponde a botellas. Cada botella suma ClaudiPoints después de aprobar la entrega.</small>';
-document.getElementById('ws-botellas-identidad').before(bottleField);
-function actualizarBotellas(){const count=document.getElementById('ws-bottle-count'),material=document.getElementById('tipo_material').value;const eligible=['plastico','vidrio'].includes(material);count.disabled=!eligible;if(!eligible)count.value='0';const active=eligible&&Number(count.value)>0;document.getElementById('ws-botellas-identidad').hidden=!active;document.getElementById('ws-botellas-documentos').required=active;}
+document.getElementById('ws-botellas-identidad').before(bottleField);document.querySelector('label[for="ws-botellas-documentos"]').textContent='Documento del estudiante que lleva las botellas';
+function actualizarBotellas(){const count=document.getElementById('ws-bottle-count'),material=document.getElementById('tipo_material').value;const eligible=['plastico','vidrio'].includes(material);count.disabled=!eligible;if(!eligible)count.value='0';const active=eligible&&Number(count.value)>0;document.getElementById('ws-botellas-identidad').hidden=false;document.getElementById('ws-botellas-documentos').required=active;}
 document.getElementById('ws-bottle-count').addEventListener('input',actualizarBotellas);document.getElementById('tipo_material').addEventListener('change',actualizarBotellas);actualizarBotellas();
 safeAddListener('reciclaje-form','submit',async e=>{
  e.preventDefault();
