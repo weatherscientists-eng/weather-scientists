@@ -1,4 +1,4 @@
-const CACHE='ws-install-2026.10.23.7';
+const CACHE='ws-install-2026.11.12.1';
 const OFFLINE='/offline.html';
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll([OFFLINE,'/icons/icon-192.png','/icons/icon-512.png'])));

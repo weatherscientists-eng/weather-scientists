@@ -1,5 +1,5 @@
 // Incrementar junto con los cambios publicados en version.json.
-const WS_VERSION = '2026.10.23.7';
+const WS_VERSION = '2026.11.12.1';
 (() => {
  const banner=document.getElementById('update-banner');
  let newVersion=null, checking=false, lastCheck=0;

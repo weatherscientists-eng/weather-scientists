@@ -2,8 +2,8 @@ const crypto=require('node:crypto');
 const {createClient}=require('@supabase/supabase-js');
 const login=require('./grupo');
 const BUCKET='ws-claudipoints';
-const actividades={lluvia:'Lectura del pluviómetro',compostaje:'Entrega de residuos al compostaje',botellas:'Entrega de botellas',separacion:'Jornada de separación de botellas',evento:'Reporte de evento climático',bitacora:'Elaboración de bitácora'};
-const initial={version:'inicial',tarifas:{lluvia:5,compostaje:5,botellas:1,separacion:5,evento:5,bitacora:10},premios:[
+const actividades={lluvia:'Lectura del pluviómetro',compostaje:'Entrega de residuos al compostaje',botellas:'Entrega de botellas',separacion:'Jornada de separación de botellas',evento:'Reporte de evento climático',bitacora:'Elaboración de bitácora',aseo:'Barrer y limpiar',ayuda:'Ayudar a otras personas',decoracion:'Decorar y embellecer el colegio',buen_acto:'Otro buen acto'};
+const initial={version:'inicial',tarifas:{lluvia:5,compostaje:5,botellas:1,separacion:5,evento:5,bitacora:10,aseo:5,ayuda:5,decoracion:5,buen_acto:5},premios:[
 {id:'semilla-huerta',tipo:'insignia',nombre:'🌱 Semilla de la Huerta',descripcion:'Cada acción hace crecer nuestro colegio.',meta:20,activo:true},
 {id:'huellas-verdes',tipo:'insignia',nombre:'🍃 Huella Verde',descripcion:'Transformamos residuos en nuevas oportunidades.',meta:40,activo:true},
 {id:'weather-scientist',tipo:'insignia',nombre:'🌦️ Weather Scientist',descripcion:'Observamos, medimos y aprendemos del territorio.',meta:60,activo:true},
